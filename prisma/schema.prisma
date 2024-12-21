@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  CLIENT
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  COMPLETED
+  CANCELED
+}
+
+enum StripePaymentStatus {
+  requires_payment_method
+  requires_confirmation
+  processing
+  succeeded
+  failed
+  canceled
+}
+
+enum NotificationType {
+  ORDER_STATUS_UPDATE
+  LOW_STOCK_ALERT
+  GENERAL
+}
+
+model User {
+  id               String    @id @default(uuid())
+  name             String
+  email            String    @unique
+  password         String
+  role             Role      @default(CLIENT)
+  resetToken       String?   @unique
+  resetTokenExpiry DateTime?
+  stripeCustomerId String?   @unique
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  likes         Like[]
+  carts         Cart?
+  notifications Notification[]
+  orders        Order[]
+}
+
+model Product {
+  id               String   @id @default(uuid())
+  name             String
+  description      String
+  price            Float
+  stock            Int
+  isDisabled       Boolean  @default(false)
+  lowStockNotified Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  categoryId       String
+
+  category   Category       @relation(fields: [categoryId], references: [id])
+  images     ProductImage[]
+  likes      Like[]
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  parentId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products      Product[]
+  parent        Category?  @relation("CategoryToParent", fields: [parentId], references: [id])
+  subCategories Category[] @relation("CategoryToParent")
+}
+
+model ProductImage {
+  id        String @id @default(uuid())
+  url       String @unique
+  productId String
+
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  productId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+model Cart {
+  id     String @id @default(uuid())
+  userId String @unique
+
+  user      User       @relation(fields: [userId], references: [id])
+  cartItems CartItem[]
+}
+
+model CartItem {
+  id        String @id @default(uuid())
+  productId String
+  cartId    String
+  quantity  Int
+
+  cart    Cart    @relation(fields: [cartId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  userId          String
+  total           Float
+  paymentIntentId String
+  orderStatus     OrderStatus @default(PENDING)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  orderItems      OrderItem[]
+
+  user    User            @relation(fields: [userId], references: [id])
+  payment PaymentIntent[]
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  quantity  Int
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  type      NotificationType
+  message   String
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+}
+
+model PaymentIntent {
+  id                  String              @id @default(uuid())
+  orderId             String
+  order               Order               @relation(fields: [orderId], references: [id])
+  stripePaymentId     String              @unique
+  stripeClientSecret  String              @unique
+  stripeStatus        StripePaymentStatus @default(requires_payment_method)
+  stripeAmount        Float
+  stripeCurrency      String
+  stripePaymentMethod String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+}
