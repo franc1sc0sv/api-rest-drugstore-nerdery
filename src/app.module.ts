@@ -10,8 +10,6 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { GqlConfigService } from './configs/graphql/gql.config.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoriesModule } from './modules/categories/categories.module';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from './common/guards/roles.guard';
 import { seed } from './seeds/seed';
 
 @Module({
@@ -31,12 +29,7 @@ import { seed } from './seeds/seed';
     CategoriesModule,
   ],
   controllers: [],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: RolesGuard,
-    },
-  ],
+  providers: [],
 })
 export class AppModule implements OnModuleInit {
   async onModuleInit() {
