@@ -11,6 +11,13 @@ export const CurrentUser = createParamDecorator(
     const ctx = GqlExecutionContext.create(context);
     const req = ctx.getContext().req;
 
+    // User object exist
+    const full_user_id = req.user?.id;
+    if (full_user_id) {
+      return { ...req.user };
+    }
+
+    // Just userId exist
     const userId = req.user?.userId;
     if (!userId) {
       throw new UnauthorizedException(

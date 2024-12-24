@@ -5,32 +5,47 @@ import {
 } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { AuthService } from '../auth.service';
 import { JwtPayload } from 'src/common/interfaces/jwt-payload.interface';
 import { User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
+import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly authService: AuthService,
     private readonly prismaService: PrismaService,
+    private readonly configService: ConfigService,
   ) {
     super({
+      secretOrKey: configService.get<string>('JWT_SECRET'),
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_SECRET,
+      passReqToCallback: true,
     });
   }
 
-  async validate(payload: JwtPayload): Promise<User> {
+  async validate(req: Request, payload: JwtPayload): Promise<User> {
     try {
       const { userId } = payload;
+      const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
+
       const user = await this.prismaService.user.findFirst({
         where: { id: userId },
       });
 
       if (!user) {
         throw new UnauthorizedException('User not found');
+      }
+
+      const revokedToken = await this.prismaService.revokedToken.findFirst({
+        where: {
+          userId,
+          token,
+        },
+      });
+
+      if (revokedToken) {
+        throw new UnauthorizedException('Token has been revoked');
       }
 
       return user;

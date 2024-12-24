@@ -18,13 +18,14 @@ import { AuthModule } from './modules/auth/auth.module';
       validate,
       load: [config],
     }),
-    PrismaModule.forRoot({ isGlobal: true }),
-    AuthModule,
+
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-
       useClass: GqlConfigService,
     }),
+    PrismaModule.forRoot({ isGlobal: true }),
+
+    AuthModule,
   ],
   controllers: [],
   providers: [],

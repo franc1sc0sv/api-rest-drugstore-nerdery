@@ -11,6 +11,7 @@ import { AuthResponseDto } from './dtos/response/auth-response.dto';
 import { comparePassword, hashPassword } from 'src/common/utils/bcrypt.util';
 import { RegisterUserInput } from './dtos/request/register-user.input';
 import { UserResponseDto } from './dtos/response/user-response.dto';
+import { UserDto } from 'src/common/dtos/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -34,6 +35,7 @@ export class AuthService {
       }
 
       const hashedPassword = await hashPassword(password);
+
       return await this.prismaService.user.create({
         data: { email, password: hashedPassword, name },
       });
@@ -43,8 +45,16 @@ export class AuthService {
     }
   }
 
-  async login(data: LoginUserInput): Promise<AuthResponseDto> {
-    const { email, password } = data;
+  async login(user: UserDto): Promise<AuthResponseDto> {
+    const { id } = user;
+    const payload = { userId: id };
+    return {
+      token: this.jwtService.sign(payload),
+    };
+  }
+
+  async validateUser(loginUserInput: LoginUserInput): Promise<UserResponseDto> {
+    const { email, password } = loginUserInput;
 
     try {
       const user = await this.prismaService.user.findFirst({
@@ -60,8 +70,7 @@ export class AuthService {
         throw new UnauthorizedException('Invalid email or password');
       }
 
-      const token = this.jwtService.sign({ userId: user.id });
-      return { token };
+      return user;
     } catch (error) {
       console.error('Error in login:', error);
       if (error instanceof UnauthorizedException) throw error;

@@ -13,34 +13,23 @@ import { AuthResponseDto } from './dtos/response/auth-response.dto';
 import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserResponseDto } from './dtos/response/user-response.dto';
+import { LocalAuthGuard } from 'src/common/guards/local-auth.guard';
+import { UserDto } from 'src/common/dtos/user.dto';
 
 @Resolver()
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 
-  @Query(() => String, { description: 'Health check for AuthResolver' })
-  healthCheck(): string {
-    return 'AuthResolver is up and running!';
-  }
-
-  @Mutation(() => UserResponseDto)
-  async register(
-    @Args('registerUserInput') registerUserInput: RegisterUserInput,
-  ): Promise<UserResponseDto> {
-    try {
-      return await this.authService.register(registerUserInput);
-    } catch (error) {
-      throw error;
-    }
-  }
-
+  @UseGuards(LocalAuthGuard)
   @Mutation(() => AuthResponseDto)
   async login(
     @Args('loginUserInput') loginUserInput: LoginUserInput,
-  ): Promise<AuthResponseDto> {
+    @CurrentUser() user: UserDto,
+  ): Promise<any> {
     try {
-      return await this.authService.login(loginUserInput);
+      return await this.authService.login(user);
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
@@ -61,5 +50,21 @@ export class AuthResolver {
     } catch (error) {
       throw error;
     }
+  }
+
+  @Mutation(() => UserResponseDto)
+  async register(
+    @Args('registerUserInput') registerUserInput: RegisterUserInput,
+  ): Promise<UserResponseDto> {
+    try {
+      return await this.authService.register(registerUserInput);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Query(() => String, { description: 'Health check for AuthResolver' })
+  healthCheck(): string {
+    return 'AuthResolver is up and running!';
   }
 }
