@@ -12,6 +12,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { seed } from './seeds/seed';
 import { seedCategories } from './seeds/seed-categories';
+import { ImagesModule } from './modules/images/images.module';
+import { ProductsModule } from './modules/products/products.module';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { seedCategories } from './seeds/seed-categories';
     PrismaModule.forRoot({ isGlobal: true }),
     AuthModule,
     CategoriesModule,
+    ImagesModule,
+    ProductsModule,
   ],
   controllers: [],
   providers: [],

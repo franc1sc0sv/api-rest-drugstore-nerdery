@@ -1,6 +1,4 @@
-// src/config/configuration.ts
 import { plainToInstance } from 'class-transformer';
-
 import { IsString, IsNumber, Min, Max, validateSync } from 'class-validator';
 
 export class EnvironmentVariables {
@@ -31,6 +29,21 @@ export class EnvironmentVariables {
 
   @IsString()
   DATABASE_URL: string;
+
+  @IsString()
+  CLOUDINARY_CLOUD_NAME: string;
+
+  @IsString()
+  CLOUDINARY_API_KEY: string;
+
+  @IsString()
+  CLOUDINARY_API_SECRET: string;
+
+  @IsString()
+  CLOUDINARY_URL: string;
+
+  @IsString()
+  NODE_ENV: string;
 }
 
 export const validate = (config: Record<string, unknown>) => {
