@@ -6,6 +6,23 @@ type AuthResponseDto {
   token: String!
 }
 
+type CategoryResponse {
+  createdAt: DateTime!
+  description: String!
+  id: ID!
+  name: String!
+  parent: CategoryResponse
+  parentId: String
+  subCategories: [CategoryResponse!]!
+  updatedAt: DateTime!
+}
+
+input CreateCategoryInput {
+  description: String!
+  name: String!
+  parentId: String
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -17,12 +34,18 @@ input LoginUserInput {
 }
 
 type Mutation {
+  createCategory(createCategoryInput: CreateCategoryInput!): CategoryResponse!
+  deleteCategory(id: String!): Boolean!
   login(loginUserInput: LoginUserInput!): AuthResponseDto!
   logout: Boolean!
   register(registerUserInput: RegisterUserInput!): UserResponseDto!
+  updateCategory(id: String!, updateCategoryInput: UpdateCategoryInput!): CategoryResponse!
 }
 
 type Query {
+  getCategories: [CategoryResponse!]!
+  getCategory(id: String!): CategoryResponse!
+
   """Health check for AuthResolver"""
   healthCheck: String!
 }
@@ -31,6 +54,12 @@ input RegisterUserInput {
   email: String!
   name: String!
   password: String!
+}
+
+input UpdateCategoryInput {
+  description: String
+  name: String
+  parentId: String
 }
 
 type UserResponseDto {

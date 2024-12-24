@@ -1,4 +1,65 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { PrismaService } from 'nestjs-prisma';
+import { CreateCategoryInput } from './dtos/request/create-category.input';
+import { UpdateCategoryInput } from './dtos/request/update-category.input';
 
 @Injectable()
-export class CategoriesService {}
+export class CategoriesService {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async getAllCategories() {
+    return this.prismaService.category.findMany({
+      include: {
+        subCategories: true,
+        parent: true,
+      },
+    });
+  }
+
+  async getCategoryByID(id: string) {
+    const category = this.prismaService.category.findFirst({
+      where: { id },
+      include: {
+        subCategories: true,
+        parent: true,
+      },
+    });
+
+    if (!category) {
+      throw new NotFoundException();
+    }
+
+    return category;
+  }
+
+  async createCategory(data: CreateCategoryInput) {
+    const { name } = data;
+
+    const isCategoryRepeted = await this.prismaService.category.findFirst({
+      where: { name },
+    });
+    if (isCategoryRepeted) {
+      return new ConflictException('Category name already in use');
+    }
+    return this.prismaService.category.create({
+      data,
+    });
+  }
+
+  async updateCategory(id: string, data: UpdateCategoryInput) {
+    return this.prismaService.category.update({
+      where: { id },
+      data,
+    });
+  }
+
+  async removeCategory(id: string) {
+    return this.prismaService.category.delete({
+      where: { id },
+    });
+  }
+}
