@@ -1,0 +1,47 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type AuthResponseDto {
+  token: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input LoginUserInput {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  login(loginUserInput: LoginUserInput!): AuthResponseDto!
+  logout: Boolean!
+  register(registerUserInput: RegisterUserInput!): UserResponseDto!
+}
+
+type Query {
+  """Health check for AuthResolver"""
+  healthCheck: String!
+}
+
+input RegisterUserInput {
+  email: String!
+  name: String!
+  password: String!
+}
+
+type UserResponseDto {
+  createdAt: DateTime!
+  email: String!
+  id: ID!
+  name: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: DateTime
+  role: String!
+  stripeCustomerId: String
+  updatedAt: DateTime!
+}

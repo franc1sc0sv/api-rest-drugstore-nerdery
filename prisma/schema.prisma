@@ -51,6 +51,15 @@ model User {
   carts         Cart?
   notifications Notification[]
   orders        Order[]
+  revokedToken  RevokedToken[]
+}
+
+model RevokedToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Product {

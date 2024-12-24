@@ -19,8 +19,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // pipes
-  app.useGlobalPipes(new ValidationPipe());
-
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      disableErrorMessages: false,
+    }),
+  );
   app.enableShutdownHooks();
 
   // prisma exeption filters

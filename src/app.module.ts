@@ -5,9 +5,10 @@ import { validate } from './configs/env/env.validation';
 
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from 'nestjs-prisma';
-// import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-// import { GraphQLModule } from '@nestjs/graphql';
-// import { GqlConfigService } from './configs/graphql/gql.config.service';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { GraphQLModule } from '@nestjs/graphql';
+import { GqlConfigService } from './configs/graphql/gql.config.service';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -17,12 +18,13 @@ import { PrismaModule } from 'nestjs-prisma';
       validate,
       load: [config],
     }),
-
     PrismaModule.forRoot({ isGlobal: true }),
-    // GraphQLModule.forRootAsync<ApolloDriverConfig>({
-    //   driver: ApolloDriver,
-    //   useClass: GqlConfigService,
-    // }),
+    AuthModule,
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      driver: ApolloDriver,
+
+      useClass: GqlConfigService,
+    }),
   ],
   controllers: [],
   providers: [],
