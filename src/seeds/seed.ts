@@ -1,31 +1,14 @@
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 import { hashPassword } from 'src/common/utils/bcrypt.util';
+import { usersdata } from './data/users.data';
 
 const prisma = new PrismaClient();
 
 export const seed = async () => {
   console.log('Seeding data...');
 
-  const usersToCreate = [
-    {
-      role: Role.ADMIN,
-      count: 2,
-      password: 'adminpassword',
-    },
-    {
-      role: Role.MANAGER,
-      count: 3,
-      password: 'managerpassword',
-    },
-    {
-      role: Role.CLIENT,
-      count: 5,
-      password: 'clientpassword',
-    },
-  ];
-
-  for (const { role, count, password } of usersToCreate) {
+  for (const { role, count, password } of usersdata) {
     const existingUsers = await prisma.user.findMany({
       where: { role },
     });

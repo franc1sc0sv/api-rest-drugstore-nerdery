@@ -13,6 +13,9 @@ export class CategoriesService {
 
   async getAllCategories() {
     return this.prismaService.category.findMany({
+      where: {
+        parentId: null,
+      },
       include: {
         subCategories: true,
         parent: true,
@@ -58,8 +61,9 @@ export class CategoriesService {
   }
 
   async removeCategory(id: string) {
-    return this.prismaService.category.delete({
+    await this.prismaService.category.delete({
       where: { id },
     });
+    return true;
   }
 }

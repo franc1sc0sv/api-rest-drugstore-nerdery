@@ -11,6 +11,7 @@ import { GqlConfigService } from './configs/graphql/gql.config.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { seed } from './seeds/seed';
+import { seedCategories } from './seeds/seed-categories';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ export class AppModule implements OnModuleInit {
   async onModuleInit() {
     if (process.env.NODE_ENV === 'development') {
       await seed();
+      await seedCategories();
     }
   }
 }
