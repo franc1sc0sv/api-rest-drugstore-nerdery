@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { IsBuffer } from 'src/common/decorators/isBuffer.decorator';
+import { IsBuffer } from 'src/common/decorators/IsBuffer.decorator';
 
 export class UploadImageInput {
   @IsBuffer()

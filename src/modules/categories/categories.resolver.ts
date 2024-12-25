@@ -24,7 +24,7 @@ export class CategoriesResolver {
   }
 
   @Mutation(() => CategoryResponse)
-  @Roles(Role.ADMIN, Role.MANAGER)
+  @Roles(Role.MANAGER)
   @UseGuards(GqlAuthGuard, RolesGuard)
   async createCategory(
     @Args('createCategoryInput') createCategoryInput: CreateCategoryInput,
@@ -34,7 +34,7 @@ export class CategoriesResolver {
 
   @Mutation(() => CategoryResponse)
   @UseGuards(GqlAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
+  @Roles(Role.MANAGER)
   async updateCategory(
     @Args('id') id: string,
     @Args('updateCategoryInput') updateCategoryInput: UpdateCategoryInput,
@@ -44,7 +44,7 @@ export class CategoriesResolver {
 
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
+  @Roles(Role.MANAGER)
   async deleteCategory(@Args('id') id: string) {
     return this.categoryService.removeCategory(id);
   }
