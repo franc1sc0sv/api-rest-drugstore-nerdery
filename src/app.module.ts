@@ -14,6 +14,9 @@ import { seed } from './seeds/seed';
 import { seedCategories } from './seeds/seed-categories';
 import { ImagesModule } from './modules/images/images.module';
 import { ProductsModule } from './modules/products/products.module';
+import { CartsModule } from './modules/carts/carts.module';
+import { LikesModule } from './modules/likes/likes.module';
+import { MailsModule } from './modules/mails/mails.module';
 
 @Module({
   imports: [
@@ -32,6 +35,9 @@ import { ProductsModule } from './modules/products/products.module';
     CategoriesModule,
     ImagesModule,
     ProductsModule,
+    CartsModule,
+    LikesModule,
+    MailsModule,
   ],
   controllers: [],
   providers: [],

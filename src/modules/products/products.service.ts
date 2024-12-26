@@ -131,4 +131,10 @@ export class ProductsService {
     await this.prismaService.productImage.delete({ where: { id: imageId } });
     return true;
   }
+
+  async updateProductDetails() {}
+
+  async deleteProduct() {}
+
+  async updateProductStatus() {}
 }

@@ -47,15 +47,21 @@ input LoginUserInput {
 }
 
 type Mutation {
-  addImagesToProduct(productId: IdDto!, uploadProductImageInput: [UploadProductImageInput!]!): ProductResponse!
+  addImagesToProduct(
+    productIdDto: IdDto!
+    uploadProductImageInput: [UploadProductImageInput!]!
+  ): ProductResponse!
   createCategory(createCategoryInput: CreateCategoryInput!): CategoryResponse!
   createProduct(createProductInput: CreateProductInput!): ProductResponse!
   deleteCategory(id: String!): Boolean!
   login(loginUserInput: LoginUserInput!): AuthResponseDto!
   logout: Boolean!
   register(registerUserInput: RegisterUserInput!): UserResponseDto!
-  removeImageFromProduct(imageUrl: IdDto!, productId: IdDto!): Boolean!
-  updateCategory(id: String!, updateCategoryInput: UpdateCategoryInput!): CategoryResponse!
+  removeImageFromProduct(imageUrlDto: IdDto!, productIdDto: IdDto!): Boolean!
+  updateCategory(
+    id: String!
+    updateCategoryInput: UpdateCategoryInput!
+  ): CategoryResponse!
 }
 
 type ProductImage {
@@ -82,7 +88,9 @@ type Query {
   getCategories: [CategoryResponse!]!
   getCategory(id: String!): CategoryResponse!
 
-  """Health check for AuthResolver"""
+  """
+  Health check for AuthResolver
+  """
   healthCheck: String!
 }
 
