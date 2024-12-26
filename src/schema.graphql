@@ -23,10 +23,23 @@ input CreateCategoryInput {
   parentId: String
 }
 
+input CreateProductInput {
+  categoryId: String!
+  description: String!
+  images: [UploadProductImageInput!]!
+  name: String!
+  price: Float!
+  stock: Float!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+input IdDto {
+  id: String!
+}
 
 input LoginUserInput {
   email: String!
@@ -34,12 +47,35 @@ input LoginUserInput {
 }
 
 type Mutation {
+  addImagesToProduct(productId: IdDto!, uploadProductImageInput: [UploadProductImageInput!]!): ProductResponse!
   createCategory(createCategoryInput: CreateCategoryInput!): CategoryResponse!
+  createProduct(createProductInput: CreateProductInput!): ProductResponse!
   deleteCategory(id: String!): Boolean!
   login(loginUserInput: LoginUserInput!): AuthResponseDto!
   logout: Boolean!
   register(registerUserInput: RegisterUserInput!): UserResponseDto!
+  removeImageFromProduct(imageUrl: IdDto!, productId: IdDto!): Boolean!
   updateCategory(id: String!, updateCategoryInput: UpdateCategoryInput!): CategoryResponse!
+}
+
+type ProductImage {
+  cloudinaryPublicId: String!
+  productId: String!
+  url: String!
+}
+
+type ProductResponse {
+  categoryId: String!
+  createdAt: DateTime!
+  description: String!
+  id: String!
+  images: [ProductImage!]
+  isDisabled: Boolean!
+  lowStockNotified: Boolean!
+  name: String!
+  price: Float!
+  stock: Float!
+  updatedAt: DateTime!
 }
 
 type Query {
@@ -60,6 +96,10 @@ input UpdateCategoryInput {
   description: String
   name: String
   parentId: String
+}
+
+input UploadProductImageInput {
+  fileBuffer: String!
 }
 
 type UserResponseDto {

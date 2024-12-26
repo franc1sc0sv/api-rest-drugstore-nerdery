@@ -1,6 +1,10 @@
+import { Field, ObjectType } from '@nestjs/graphql';
+
+@ObjectType()
 export class UploadImageResponseDto {
-  url: string;
+  @Field()
   publicId: string;
-  width: number;
-  height: number;
+
+  @Field()
+  url: string;
 }

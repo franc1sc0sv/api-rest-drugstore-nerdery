@@ -1,8 +1,9 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { Category } from '@prisma/client';
 import { IsOptional } from 'class-validator';
 
 @ObjectType()
-export class CategoryResponse {
+export class CategoryResponse implements Partial<Category> {
   @Field(() => ID)
   id: string;
 
