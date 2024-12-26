@@ -8,6 +8,8 @@ import { UploadImageResponseDto } from '../images/dtos/response/upload-image.dto
 
 import { IdDto } from 'src/common/dtos/id.dto';
 import { UploadProductImageInput } from './dtos/request/upload-product-images.input';
+import { UpdateProductInput } from './dtos/request/update-products.input';
+import { UpdateProductStatusInput } from './dtos/request/update-product-status.input';
 
 const CLOUDINATY_IMAGES_FOLDER = 'product-images';
 
@@ -132,9 +134,65 @@ export class ProductsService {
     return true;
   }
 
-  async updateProductDetails() {}
+  async getProductById(productIdDto: IdDto) {
+    const { id: productId } = productIdDto;
+    const product = await this.prismaService.product.findFirst({
+      where: { id: productId },
+      include: { images: true },
+    });
 
-  async deleteProduct() {}
+    if (!product) {
+      throw new NotFoundException();
+    }
 
-  async updateProductStatus() {}
+    return product;
+  }
+
+  async updateProductDetails(
+    productIdDto: IdDto,
+    updateProductInput: UpdateProductInput,
+  ): Promise<ProductResponse> {
+    const { id: productId } = productIdDto;
+    await this.getProductById(productIdDto);
+
+    return this.prismaService.product.update({
+      where: { id: productId },
+      data: updateProductInput,
+      include: { images: true },
+    });
+  }
+
+  async deleteProduct(productIdDto: IdDto): Promise<boolean> {
+    const { id: productId } = productIdDto;
+    await this.getProductById(productIdDto);
+
+    const productImages = await this.prismaService.productImage.findMany({
+      where: { productId },
+    });
+
+    productImages.forEach(async (image) => {
+      await this.imagesService.deleteImage({
+        publicId: image.cloudinaryPublicId,
+      });
+    });
+
+    await this.prismaService.productImage.deleteMany({ where: { productId } });
+    await this.prismaService.product.delete({ where: { id: productId } });
+    return true;
+  }
+
+  async updateProductStatus(
+    productIdDto: IdDto,
+    updateProductStatusdInput: UpdateProductStatusInput,
+  ): Promise<ProductResponse> {
+    await this.getProductById(productIdDto);
+    const { id: productId } = productIdDto;
+    const { isDisabled } = updateProductStatusdInput;
+
+    return this.prismaService.product.update({
+      where: { id: productId },
+      data: { isDisabled },
+      include: { images: true },
+    });
+  }
 }
