@@ -47,7 +47,10 @@ input LoginUserInput {
 }
 
 type Mutation {
-  addImagesToProduct(productIdDto: IdDto!, uploadProductImageInput: [UploadProductImageInput!]!): ProductResponse!
+  addImagesToProduct(
+    productIdDto: IdDto!
+    uploadProductImageInput: [UploadProductImageInput!]!
+  ): ProductResponse!
   createCategory(createCategoryInput: CreateCategoryInput!): CategoryResponse!
   createProduct(createProductInput: CreateProductInput!): ProductResponse!
   deleteCategory(id: String!): Boolean!
@@ -56,9 +59,18 @@ type Mutation {
   logout: Boolean!
   register(registerUserInput: RegisterUserInput!): UserResponseDto!
   removeImageFromProduct(imageUrlDto: IdDto!, productIdDto: IdDto!): Boolean!
-  updateCategory(id: String!, updateCategoryInput: UpdateCategoryInput!): CategoryResponse!
-  updateProductDetails(productIdDto: IdDto!, updateProductInput: UpdateProductInput!): ProductResponse!
-  updateProductStatus(productIdDto: IdDto!, updateProductStatusdInput: UpdateProductStatusInput!): ProductResponse!
+  updateCategory(
+    id: String!
+    updateCategoryInput: UpdateCategoryInput!
+  ): CategoryResponse!
+  updateProductDetails(
+    productIdDto: IdDto!
+    updateProductInput: UpdateProductInput!
+  ): ProductResponse!
+  updateProductStatus(
+    productIdDto: IdDto!
+    updateProductStatusdInput: UpdateProductStatusInput!
+  ): ProductResponse!
 }
 
 type ProductImage {
@@ -86,7 +98,9 @@ type Query {
   getCategory(id: String!): CategoryResponse!
   getProductById(productIdDto: IdDto!): ProductResponse!
 
-  """Health check for AuthResolver"""
+  """
+  Health check for AuthResolver
+  """
   healthCheck: String!
 }
 
