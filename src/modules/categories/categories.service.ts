@@ -6,12 +6,13 @@ import {
 import { PrismaService } from 'nestjs-prisma';
 import { CreateCategoryInput } from './dtos/request/create-category.input';
 import { UpdateCategoryInput } from './dtos/request/update-category.input';
+import { CategoryDto } from 'src/common/dtos/category.dto';
 
 @Injectable()
 export class CategoriesService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getAllCategories() {
+  async getAllCategories(): Promise<CategoryDto[]> {
     return this.prismaService.category.findMany({
       where: {
         parentId: null,
@@ -23,7 +24,7 @@ export class CategoriesService {
     });
   }
 
-  async getCategoryByID(id: string) {
+  async getCategoryByID(id: string): Promise<CategoryDto> {
     const category = this.prismaService.category.findFirst({
       where: { id },
       include: {
@@ -39,28 +40,31 @@ export class CategoriesService {
     return category;
   }
 
-  async createCategory(data: CreateCategoryInput) {
+  async createCategory(data: CreateCategoryInput): Promise<CategoryDto> {
     const { name } = data;
 
     const isCategoryRepeted = await this.prismaService.category.findFirst({
       where: { name },
     });
     if (isCategoryRepeted) {
-      return new ConflictException('Category name already in use');
+      throw new ConflictException('Category name already in use');
     }
     return this.prismaService.category.create({
       data,
     });
   }
 
-  async updateCategory(id: string, data: UpdateCategoryInput) {
+  async updateCategory(
+    id: string,
+    data: UpdateCategoryInput,
+  ): Promise<CategoryDto> {
     return this.prismaService.category.update({
       where: { id },
       data,
     });
   }
 
-  async removeCategory(id: string) {
+  async removeCategory(id: string): Promise<boolean> {
     await this.prismaService.category.delete({
       where: { id },
     });

@@ -1,3 +1,4 @@
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { ConfigService } from '@nestjs/config';
 import { ApolloDriverConfig } from '@nestjs/apollo';
 import { Injectable } from '@nestjs/common';
@@ -17,6 +18,7 @@ export class GqlConfigService implements GqlOptionsFactory {
       playground: graphqlConfig.playgroundEnabled,
       context: ({ req }) => ({ req }),
       formatError: formatGraphQLError,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
     };
   }
 }

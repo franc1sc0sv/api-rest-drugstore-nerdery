@@ -3,13 +3,17 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ImagesService } from '../images/images.service';
 import { PrismaService } from 'nestjs-prisma';
 import { CreateProductInput } from './dtos/request/create-products.input';
-import { ProductResponse } from './dtos/response/product-reponse.dto';
 import { UploadImageResponseDto } from '../images/dtos/response/upload-image.dto';
 
 import { IdDto } from 'src/common/dtos/id.dto';
 import { UploadProductImageInput } from './dtos/request/upload-product-images.input';
 import { UpdateProductInput } from './dtos/request/update-products.input';
 import { UpdateProductStatusInput } from './dtos/request/update-product-status.input';
+import { GetProductsInput } from './dtos/request/get-products.inpu';
+import { ItemConnectionDto } from './dtos/pagination/item-connection.dto';
+import { ItemEdgeDto } from './dtos/pagination/item-edge.dto';
+import { PageInfoDto } from './dtos/pagination/page-info.dto';
+import { ProductDto } from 'src/common/dtos/product.dto';
 
 const CLOUDINATY_IMAGES_FOLDER = 'product-images';
 
@@ -20,9 +24,51 @@ export class ProductsService {
     private readonly imagesService: ImagesService,
   ) {}
 
+  async getProducts(
+    getProductsInput: GetProductsInput,
+  ): Promise<ItemConnectionDto> {
+    const { first, after, categoryId } = getProductsInput;
+    const cursor = after ? { id: after } : undefined;
+
+    const products = await this.prismaService.product.findMany({
+      where: categoryId ? { categoryId } : undefined,
+      take: first,
+      skip: after ? 1 : 0,
+      cursor,
+      include: {
+        category: true,
+        images: true,
+      },
+    });
+
+    const hasNextPage = (await this.prismaService.product.findFirst({
+      where: categoryId
+        ? {
+            categoryId,
+            id: { gt: products[products.length - 1]?.id },
+          }
+        : { id: { gt: products[products.length - 1]?.id } },
+    }))
+      ? true
+      : false;
+    const edges: ItemEdgeDto[] = products.map((product) => ({
+      node: { ...product },
+      cursor: product.id,
+    }));
+
+    const pageInfo: PageInfoDto = {
+      hasNextPage,
+      hasPreviousPage: !!after,
+      startCursor: edges.length > 0 ? edges[0].cursor : null,
+      endCursor: edges.length > 0 ? edges[edges.length - 1].cursor : null,
+    };
+
+    return { edges, pageInfo };
+  }
+
   async createProduct(
     createProductInput: CreateProductInput,
-  ): Promise<ProductResponse> {
+  ): Promise<ProductDto> {
     const uploadedImages: UploadImageResponseDto[] = [];
     const { images } = createProductInput;
 
@@ -64,7 +110,7 @@ export class ProductsService {
   async addImagesToProduct(
     productIdDto: IdDto,
     uploadProductImageInput: UploadProductImageInput[],
-  ): Promise<ProductResponse> {
+  ): Promise<ProductDto> {
     const { id: productId } = productIdDto;
     const product = await this.prismaService.product.findFirst({
       where: { id: productId },
@@ -151,7 +197,7 @@ export class ProductsService {
   async updateProductDetails(
     productIdDto: IdDto,
     updateProductInput: UpdateProductInput,
-  ): Promise<ProductResponse> {
+  ): Promise<ProductDto> {
     const { id: productId } = productIdDto;
     await this.getProductById(productIdDto);
 
@@ -184,7 +230,7 @@ export class ProductsService {
   async updateProductStatus(
     productIdDto: IdDto,
     updateProductStatusdInput: UpdateProductStatusInput,
-  ): Promise<ProductResponse> {
+  ): Promise<ProductDto> {
     await this.getProductById(productIdDto);
     const { id: productId } = productIdDto;
     const { isDisabled } = updateProductStatusdInput;

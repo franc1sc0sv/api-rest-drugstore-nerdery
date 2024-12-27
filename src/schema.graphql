@@ -24,14 +24,14 @@ type CartItemDto {
   quantity: Int!
 }
 
-type CategoryResponse {
+type CategoryDto {
   createdAt: DateTime!
   description: String!
   id: ID!
   name: String!
-  parent: CategoryResponse
+  parent: CategoryDto
   parentId: String
-  subCategories: [CategoryResponse!]!
+  subCategories: [CategoryDto!]!
   updatedAt: DateTime!
 }
 
@@ -55,8 +55,24 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input GetProductsInput {
+  after: String
+  categoryId: String
+  first: Int = 10
+}
+
 input IdDto {
   id: String!
+}
+
+type ItemConnectionDto {
+  edges: [ItemEdgeDto!]!
+  pageInfo: PageInfoDto!
+}
+
+type ItemEdgeDto {
+  cursor: String!
+  node: ProductDto!
 }
 
 type LikeDto {
@@ -73,10 +89,10 @@ input LoginUserInput {
 }
 
 type Mutation {
-  addImagesToProduct(productIdDto: IdDto!, uploadProductImageInput: [UploadProductImageInput!]!): ProductResponse!
+  addImagesToProduct(productIdDto: IdDto!, uploadProductImageInput: [UploadProductImageInput!]!): ProductDto!
   addItemToCart(addItemToCartInput: AddItemToCartInput!): CartDto!
-  createCategory(createCategoryInput: CreateCategoryInput!): CategoryResponse!
-  createProduct(createProductInput: CreateProductInput!): ProductResponse!
+  createCategory(createCategoryInput: CreateCategoryInput!): CategoryDto!
+  createProduct(createProductInput: CreateProductInput!): ProductDto!
   deleteCategory(id: String!): Boolean!
   deleteLike(productIdDto: IdDto!): Boolean!
   deleteProduct(productIdDto: IdDto!): Boolean!
@@ -86,17 +102,25 @@ type Mutation {
   register(registerUserInput: RegisterUserInput!): UserResponseDto!
   removeCartItem(cartIdDto: IdDto!): Boolean!
   removeImageFromProduct(imageUrlDto: IdDto!, productIdDto: IdDto!): Boolean!
-  updateCategory(id: String!, updateCategoryInput: UpdateCategoryInput!): CategoryResponse!
-  updateProductDetails(productIdDto: IdDto!, updateProductInput: UpdateProductInput!): ProductResponse!
-  updateProductStatus(productIdDto: IdDto!, updateProductStatusdInput: UpdateProductStatusInput!): ProductResponse!
+  updateCategory(id: String!, updateCategoryInput: UpdateCategoryInput!): CategoryDto!
+  updateProductDetails(productIdDto: IdDto!, updateProductInput: UpdateProductInput!): ProductDto!
+  updateProductStatus(productIdDto: IdDto!, updateProductStatusdInput: UpdateProductStatusInput!): ProductDto!
+}
+
+type PageInfoDto {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
 }
 
 type ProductDto {
+  category: CategoryDto
   categoryId: String!
   createdAt: DateTime!
   description: String!
   id: String!
-  images: [String!]
+  images: [ProductImage!]
   isDisabled: Boolean!
   lowStockNotified: Boolean!
   name: String!
@@ -111,25 +135,12 @@ type ProductImage {
   url: String!
 }
 
-type ProductResponse {
-  categoryId: String!
-  createdAt: DateTime!
-  description: String!
-  id: String!
-  images: [ProductImage!]
-  isDisabled: Boolean!
-  lowStockNotified: Boolean!
-  name: String!
-  price: Float!
-  stock: Float!
-  updatedAt: DateTime!
-}
-
 type Query {
   getCart: CartDto!
-  getCategories: [CategoryResponse!]!
-  getCategory(id: String!): CategoryResponse!
-  getProductById(productIdDto: IdDto!): ProductResponse!
+  getCategories: [CategoryDto!]!
+  getCategory(id: String!): CategoryDto!
+  getProductById(productIdDto: IdDto!): ProductDto!
+  getProducts(getProductsInput: GetProductsInput!): ItemConnectionDto!
   getUserLikes: [LikeDto!]!
 
   """Health check for AuthResolver"""

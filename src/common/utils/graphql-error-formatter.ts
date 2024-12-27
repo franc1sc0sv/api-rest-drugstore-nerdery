@@ -6,7 +6,9 @@ export const formatGraphQLError = (
   const path = formatedError.path;
   const timestamp = new Date().toISOString();
   const originalError = formatedError.extensions.originalError;
+
   console.log(formatedError);
+
   const errorMessage = {
     message:
       typeof originalError === 'string'
