@@ -1,5 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { LikeService } from './likes.service';
+import { LikesService } from './likes.service';
 import { UseGuards } from '@nestjs/common';
 import { LikeDto } from 'src/common/dtos/like.dto';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
@@ -9,7 +9,7 @@ import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
 
 @Resolver()
 export class LikesResolver {
-  constructor(private readonly likeService: LikeService) {}
+  constructor(private readonly likeService: LikesService) {}
 
   @Query(() => [LikeDto])
   @UseGuards(GqlAuthGuard)

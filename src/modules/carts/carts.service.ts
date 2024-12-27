@@ -6,7 +6,7 @@ import { IdDto } from 'src/common/dtos/id.dto';
 import { UserDto } from 'src/common/dtos/user.dto';
 
 @Injectable()
-export class CartService {
+export class CartsService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findCartByUserId(user: UserDto): Promise<CartDto> {

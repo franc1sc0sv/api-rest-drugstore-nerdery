@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-import { CartService } from './carts.service';
+import { CartsService } from './carts.service';
 import { CartDto } from 'src/common/dtos/cart.dto';
 import { IdDto } from 'src/common/dtos/id.dto';
 import { AddItemToCartInput } from './dtos/request/add-item-to-cart.input';
@@ -9,8 +9,8 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserDto } from 'src/common/dtos/user.dto';
 
 @Resolver()
-export class CartResolver {
-  constructor(private readonly cartService: CartService) {}
+export class CartsResolver {
+  constructor(private readonly cartService: CartsService) {}
 
   @Query(() => CartDto)
   @UseGuards(GqlAuthGuard)

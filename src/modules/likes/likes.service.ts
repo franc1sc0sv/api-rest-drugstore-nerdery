@@ -5,7 +5,7 @@ import { LikeDto } from 'src/common/dtos/like.dto';
 import { UserDto } from 'src/common/dtos/user.dto';
 
 @Injectable()
-export class LikeService {
+export class LikesService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async likeProduct(productIdDto: IdDto, user: UserDto): Promise<LikeDto> {
