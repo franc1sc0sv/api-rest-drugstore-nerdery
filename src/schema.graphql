@@ -79,7 +79,7 @@ type Mutation {
   createProduct(createProductInput: CreateProductInput!): ProductResponse!
   deleteCategory(id: String!): Boolean!
   deleteLike(productIdDto: IdDto!): Boolean!
-  deleteProduct(productIdDto: IdDto!): ProductResponse!
+  deleteProduct(productIdDto: IdDto!): Boolean!
   likeProduct(productIdDto: IdDto!): LikeDto!
   login(loginUserInput: LoginUserInput!): AuthResponseDto!
   logout: Boolean!

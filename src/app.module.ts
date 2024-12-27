@@ -17,6 +17,7 @@ import { ProductsModule } from './modules/products/products.module';
 import { CartsModule } from './modules/carts/carts.module';
 import { LikesModule } from './modules/likes/likes.module';
 import { MailsModule } from './modules/mails/mails.module';
+import { seedProducts } from './seeds/seed-products';
 
 @Module({
   imports: [
@@ -44,9 +45,8 @@ import { MailsModule } from './modules/mails/mails.module';
 })
 export class AppModule implements OnModuleInit {
   async onModuleInit() {
-    if (process.env.NODE_ENV === 'development') {
-      await seed();
-      await seedCategories();
-    }
+    await seed();
+    await seedCategories();
+    await seedProducts();
   }
 }

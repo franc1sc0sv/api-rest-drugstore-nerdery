@@ -48,10 +48,12 @@ export class ProductsResolver {
     );
   }
 
-  @Mutation(() => ProductResponse)
+  @Mutation(() => Boolean)
   @Roles(Role.MANAGER)
   @UseGuards(GqlAuthGuard, RolesGuard)
-  async deleteProduct(@Args('productIdDto') productIdDto: IdDto) {
+  async deleteProduct(
+    @Args('productIdDto') productIdDto: IdDto,
+  ): Promise<boolean> {
     return this.productsService.deleteProduct(productIdDto);
   }
 

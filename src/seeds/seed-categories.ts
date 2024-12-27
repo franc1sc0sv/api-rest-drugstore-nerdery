@@ -11,7 +11,6 @@ export const seedCategories = async () => {
 
     const existingCategory = await categoryExists(categoryData.name);
     if (existingCategory) {
-      console.log(`Category "${categoryData.name}" already exists. Skipping.`);
       continue;
     }
 
@@ -27,8 +26,6 @@ export const seedCategories = async () => {
         },
       });
     }
-
-    console.log(`Created category: ${category.name} with subcategories.`);
   }
 
   console.log('Seeding categories completed.');
