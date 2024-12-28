@@ -44,6 +44,18 @@ export class EnvironmentVariables {
 
   @IsString()
   NODE_ENV: string;
+
+  @IsString()
+  MAIL_USER: string;
+
+  @IsString()
+  MAIL_PASS: string;
+
+  @IsString()
+  MAIL_FROM: string;
+
+  @IsString()
+  MAIL_HOST: string;
 }
 
 export const validate = (config: Record<string, unknown>) => {

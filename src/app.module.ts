@@ -18,6 +18,8 @@ import { CartsModule } from './modules/carts/carts.module';
 import { LikesModule } from './modules/likes/likes.module';
 import { MailsModule } from './modules/mails/mails.module';
 import { seedProducts } from './seeds/seed-products';
+import { join } from 'path';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -32,6 +34,10 @@ import { seedProducts } from './seeds/seed-products';
       useClass: GqlConfigService,
     }),
     PrismaModule.forRoot({ isGlobal: true }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, './', 'static'),
+    }),
+
     AuthModule,
     CategoriesModule,
     ImagesModule,

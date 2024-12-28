@@ -3,6 +3,8 @@ import {
   Injectable,
   UnauthorizedException,
   InternalServerErrorException,
+  NotFoundException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { JwtService } from '@nestjs/jwt';
@@ -10,19 +12,21 @@ import { LoginUserInput } from './dtos/request/login-user.input';
 import { AuthResponseDto } from './dtos/response/auth-response.dto';
 import { comparePassword, hashPassword } from 'src/common/utils/bcrypt.util';
 import { RegisterUserInput } from './dtos/request/register-user.input';
-import { UserResponseDto } from './dtos/response/user-response.dto';
 import { UserDto } from 'src/common/dtos/user.dto';
+import { ForgetPasswordInput } from './dtos/request/forget-password.input';
+import { ResetPasswordInput } from './dtos/request/reset-password.input';
+import { randomUUID } from 'crypto';
+import { MailsService } from '../mails/mails.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly mailsService: MailsService,
   ) {}
 
-  async register(
-    registerUserInput: RegisterUserInput,
-  ): Promise<UserResponseDto> {
+  async register(registerUserInput: RegisterUserInput): Promise<UserDto> {
     const { email, password, name } = registerUserInput;
 
     try {
@@ -53,7 +57,7 @@ export class AuthService {
     };
   }
 
-  async validateUser(loginUserInput: LoginUserInput): Promise<UserResponseDto> {
+  async validateUser(loginUserInput: LoginUserInput): Promise<UserDto> {
     const { email, password } = loginUserInput;
 
     try {
@@ -88,5 +92,70 @@ export class AuthService {
       console.error('Error in logout:', error);
       throw new InternalServerErrorException('Error during logout');
     }
+  }
+
+  async forget(forgetPasswordInput: ForgetPasswordInput): Promise<boolean> {
+    const { email } = forgetPasswordInput;
+
+    const user = await this.prismaService.user.findFirst({
+      where: { email },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User with this email does not exist');
+    }
+
+    const resetToken = this.generateResetToken();
+    const resetTokenExpiry = new Date();
+    resetTokenExpiry.setHours(resetTokenExpiry.getHours() + 1);
+
+    await this.prismaService.user.update({
+      where: { id: user.id },
+      data: { resetToken, resetTokenExpiry },
+    });
+
+    await this.mailsService.sendPasswordResetEmail({
+      to: user.email,
+      resetToken,
+    });
+
+    return true;
+  }
+
+  async reset(resetPasswordInput: ResetPasswordInput) {
+    const { newPassword, token } = resetPasswordInput;
+
+    const user = await this.prismaService.user.findFirst({
+      where: { resetToken: token },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Invalid or expired reset token');
+    }
+
+    if (new Date() > user.resetTokenExpiry) {
+      throw new BadRequestException('Reset token has expired');
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+
+    await this.prismaService.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpiry: null,
+      },
+    });
+
+    await this.mailsService.sendPasswordChangeConfirmationEmail({
+      to: user.email,
+    });
+
+    return true;
+  }
+
+  private generateResetToken(): string {
+    return randomUUID();
   }
 }

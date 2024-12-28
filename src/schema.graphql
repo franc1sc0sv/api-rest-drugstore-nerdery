@@ -7,10 +7,6 @@ input AddItemToCartInput {
   quantity: Int!
 }
 
-type AuthResponseDto {
-  token: String!
-}
-
 type CartDto {
   cartItems: [CartItemDto!]!
   id: String!
@@ -83,11 +79,6 @@ type LikeDto {
   userId: String!
 }
 
-input LoginUserInput {
-  email: String!
-  password: String!
-}
-
 type Mutation {
   addImagesToProduct(productIdDto: IdDto!, uploadProductImageInput: [UploadProductImageInput!]!): ProductDto!
   addItemToCart(addItemToCartInput: AddItemToCartInput!): CartDto!
@@ -97,9 +88,6 @@ type Mutation {
   deleteLike(productIdDto: IdDto!): Boolean!
   deleteProduct(productIdDto: IdDto!): Boolean!
   likeProduct(productIdDto: IdDto!): LikeDto!
-  login(loginUserInput: LoginUserInput!): AuthResponseDto!
-  logout: Boolean!
-  register(registerUserInput: RegisterUserInput!): UserResponseDto!
   removeCartItem(cartIdDto: IdDto!): Boolean!
   removeImageFromProduct(imageUrlDto: IdDto!, productIdDto: IdDto!): Boolean!
   updateCategory(id: String!, updateCategoryInput: UpdateCategoryInput!): CategoryDto!
@@ -143,15 +131,6 @@ type Query {
   getProductById(productIdDto: IdDto!): ProductDto!
   getProducts(getProductsInput: GetProductsInput!): ItemConnectionDto!
   getUserLikes: [LikeDto!]!
-
-  """Health check for AuthResolver"""
-  healthCheck: String!
-}
-
-input RegisterUserInput {
-  email: String!
-  name: String!
-  password: String!
 }
 
 input UpdateCategoryInput {
@@ -174,17 +153,4 @@ input UpdateProductStatusInput {
 
 input UploadProductImageInput {
   fileBuffer: String!
-}
-
-type UserResponseDto {
-  createdAt: DateTime!
-  email: String!
-  id: ID!
-  name: String!
-  password: String!
-  resetToken: String
-  resetTokenExpiry: DateTime
-  role: String!
-  stripeCustomerId: String
-  updatedAt: DateTime!
 }
