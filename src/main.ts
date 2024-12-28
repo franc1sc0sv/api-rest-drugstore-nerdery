@@ -3,22 +3,18 @@ import { AppModule } from './app.module';
 import { PrismaClientExceptionFilter } from 'nestjs-prisma';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import helmet from 'helmet';
 
 import * as fs from 'fs';
 import { parse } from 'yaml';
 
 import { SwaggerModule } from '@nestjs/swagger';
 
-import {
-  CorsConfig,
-  NestConfig,
-  SwaggerConfig,
-} from './configs/config.interface';
+import { NestConfig, SwaggerConfig } from './configs/config.interface';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // pipes
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -27,31 +23,45 @@ async function bootstrap() {
       disableErrorMessages: false,
     }),
   );
-  app.enableShutdownHooks();
 
-  // prisma exeption filters
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
-  // config
   const configService = app.get(ConfigService);
 
   const nestConfig = configService.get<NestConfig>('nest');
-  const corsConfig = configService.get<CorsConfig>('cors');
+
   const swaggerConfig = configService.get<SwaggerConfig>('swagger');
   const portEnv = configService.get<number>('PORT');
 
-  // swagger
   const swaggerYaml = fs.readFileSync('swagger-api.yml', 'utf8');
   const swaggerDocument = parse(swaggerYaml);
   const document = SwaggerModule.createDocument(app, swaggerDocument);
 
   SwaggerModule.setup(swaggerConfig.path || 'api', app, document);
 
-  // cors
-  if (corsConfig.enabled) {
-    app.enableCors();
-  }
+  app.use(
+    helmet({
+      crossOriginEmbedderPolicy: false,
+      contentSecurityPolicy: {
+        directives: {
+          imgSrc: [
+            `'self'`,
+            'data:',
+            'apollo-server-landing-page.cdn.apollographql.com',
+          ],
+          scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+          manifestSrc: [
+            `'self'`,
+            'apollo-server-landing-page.cdn.apollographql.com',
+          ],
+          frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
+        },
+      },
+    }),
+  );
+
+  app.enableCors();
 
   await app.listen(portEnv || nestConfig.port || 3000);
 }

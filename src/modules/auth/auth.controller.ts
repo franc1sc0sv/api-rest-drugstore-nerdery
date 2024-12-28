@@ -10,6 +10,7 @@ import { AuthResponseDto } from './dtos/response/auth-response.dto';
 import { RegisterUserInput } from './dtos/request/register-user.input';
 import { ForgetPasswordInput } from './dtos/request/forget-password.input';
 import { ResetPasswordInput } from './dtos/request/reset-password.input';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -29,6 +30,7 @@ export class AuthController {
   }
 
   @Post('forget')
+  @Throttle({ default: { limit: 3, ttl: 1 * 60000 } })
   async forget(
     @Body() forgetPasswordInput: ForgetPasswordInput,
   ): Promise<boolean> {
@@ -36,6 +38,7 @@ export class AuthController {
   }
 
   @Patch('reset')
+  @Throttle({ default: { limit: 3, ttl: 1 * 60000 } })
   async reset(
     @Body() resetPasswordInput: ResetPasswordInput,
   ): Promise<boolean> {

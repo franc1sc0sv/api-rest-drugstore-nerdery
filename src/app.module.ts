@@ -20,6 +20,8 @@ import { MailsModule } from './modules/mails/mails.module';
 import { seedProducts } from './seeds/seed-products';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -37,7 +39,12 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, './', 'static'),
     }),
-
+    ThrottlerModule.forRoot([
+      {
+        ttl: 0,
+        limit: 0,
+      },
+    ]),
     AuthModule,
     CategoriesModule,
     ImagesModule,
@@ -47,7 +54,12 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     MailsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule implements OnModuleInit {
   async onModuleInit() {
