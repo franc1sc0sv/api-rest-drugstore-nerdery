@@ -5,10 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
 
-import * as fs from 'fs';
-import { parse } from 'yaml';
-
-import { SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { NestConfig, SwaggerConfig } from './configs/config.interface';
 
@@ -34,9 +31,14 @@ async function bootstrap() {
   const swaggerConfig = configService.get<SwaggerConfig>('swagger');
   const portEnv = configService.get<number>('PORT');
 
-  const swaggerYaml = fs.readFileSync('swagger-api.yml', 'utf8');
-  const swaggerDocument = parse(swaggerYaml);
-  const document = SwaggerModule.createDocument(app, swaggerDocument);
+  const swaggerDocumentConfig = new DocumentBuilder()
+    .setTitle('Cinnamoroll Drugstore')
+    .setDescription('The REST API from cinnamoroll drugstore')
+    .setVersion('1.0')
+    .addTag('Drugstore')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, swaggerDocumentConfig);
 
   SwaggerModule.setup(swaggerConfig.path || 'api', app, document);
 
