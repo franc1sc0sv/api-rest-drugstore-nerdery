@@ -1,5 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
-import { IsNotEmpty, IsString, IsNumber, Min, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsNumber, Min } from 'class-validator';
 import { UploadProductImageInput } from './upload-product-images.input';
 
 @InputType()
@@ -25,7 +25,7 @@ export class CreateProductInput {
   stock: number;
 
   @Field()
-  @IsUUID('4', { message: 'El ID de la categoría debe ser un UUID válido.' })
+  @IsString()
   categoryId: string;
 
   @Field(() => [UploadProductImageInput])

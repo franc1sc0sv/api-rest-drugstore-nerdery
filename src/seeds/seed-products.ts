@@ -17,7 +17,23 @@ export const seedProducts = async () => {
 
     if (!(existingProducts > 0)) {
       await Promise.all(
-        products.map((product) => productService.createProduct(product)),
+        products.map(async (product) => {
+          const { categoryId, description, images, name, price, stock } =
+            product;
+          const category = await prisma.category.findFirst({
+            where: {
+              name: categoryId,
+            },
+          });
+          return productService.createProduct({
+            name,
+            description,
+            price,
+            stock,
+            images,
+            categoryId: category.id,
+          });
+        }),
       );
     }
 

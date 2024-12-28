@@ -131,6 +131,7 @@ type ProductDto {
 
 type ProductImage {
   cloudinaryPublicId: String!
+  id: String!
   productId: String!
   url: String!
 }
