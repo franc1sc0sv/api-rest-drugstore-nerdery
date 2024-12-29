@@ -7,6 +7,7 @@ import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserDto } from 'src/common/dtos/user.dto';
+import { TotalCart } from './dtos/response/total-cart.dto';
 
 @Resolver()
 export class CartsResolver {
@@ -15,7 +16,7 @@ export class CartsResolver {
   @Query(() => CartDto)
   @UseGuards(GqlAuthGuard)
   async getCart(@CurrentUser() user: UserDto): Promise<CartDto> {
-    return this.cartService.findCartByUserId(user);
+    return await this.cartService.findCartByUserId(user);
   }
 
   @Mutation(() => CartDto)
@@ -24,7 +25,7 @@ export class CartsResolver {
     @Args('addItemToCartInput') addItemToCartInput: AddItemToCartInput,
     @CurrentUser() user: UserDto,
   ): Promise<CartDto> {
-    return this.cartService.addItemToCart(addItemToCartInput, user);
+    return await this.cartService.addItemToCart(addItemToCartInput, user);
   }
 
   @Mutation(() => Boolean)
@@ -33,6 +34,12 @@ export class CartsResolver {
     @Args('cartIdDto') cartIdDto: IdDto,
     @CurrentUser() user: UserDto,
   ): Promise<boolean> {
-    return this.cartService.removeCartItem(cartIdDto, user);
+    return await this.cartService.removeCartItem(cartIdDto, user);
+  }
+
+  @Mutation(() => TotalCart)
+  @UseGuards(GqlAuthGuard)
+  async calculateTotal(@CurrentUser() user: UserDto): Promise<TotalCart> {
+    return await this.cartService.calculateTotal(user);
   }
 }

@@ -13,25 +13,10 @@ enum Role {
 }
 
 enum OrderStatus {
+  FAILED
   PENDING
-  PAID
   COMPLETED
   CANCELED
-}
-
-enum StripePaymentStatus {
-  requires_payment_method
-  requires_confirmation
-  processing
-  succeeded
-  failed
-  canceled
-}
-
-enum NotificationType {
-  ORDER_STATUS_UPDATE
-  LOW_STOCK_ALERT
-  GENERAL
 }
 
 model User {
@@ -46,11 +31,10 @@ model User {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  likes         Like[]
-  carts         Cart?
-  notifications Notification[]
-  orders        Order[]
-  revokedToken  RevokedToken[]
+  likes        Like[]
+  carts        Cart?
+  orders       Order[]
+  revokedToken RevokedToken[]
 }
 
 model RevokedToken {
@@ -131,17 +115,16 @@ model CartItem {
 }
 
 model Order {
-  id              String      @id @default(uuid())
-  userId          String
-  total           Float
-  paymentIntentId String
-  orderStatus     OrderStatus @default(PENDING)
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  orderItems      OrderItem[]
+  id          String      @id @default(uuid())
+  total       Float
+  orderStatus OrderStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  userId      String      @unique
 
-  user    User            @relation(fields: [userId], references: [id])
-  payment PaymentIntent[]
+  user       User            @relation(fields: [userId], references: [id])
+  orderItems OrderItem[]
+  payments   PaymentIntent[]
 }
 
 model OrderItem {
@@ -153,26 +136,16 @@ model OrderItem {
   quantity  Int
 }
 
-model Notification {
-  id        String           @id @default(uuid())
-  userId    String
-  user      User             @relation(fields: [userId], references: [id])
-  type      NotificationType
-  message   String
-  isRead    Boolean          @default(false)
-  createdAt DateTime         @default(now())
-}
-
 model PaymentIntent {
-  id                  String              @id @default(uuid())
+  id                  String   @id @default(uuid())
   orderId             String
-  order               Order               @relation(fields: [orderId], references: [id])
-  stripePaymentId     String              @unique
-  stripeClientSecret  String              @unique
-  stripeStatus        StripePaymentStatus @default(requires_payment_method)
+  order               Order    @relation(fields: [orderId], references: [id])
+  stripePaymentId     String   @unique
+  stripeClientSecret  String   @unique
+  stripeStatus        String
   stripeAmount        Float
   stripeCurrency      String
   stripePaymentMethod String?
-  createdAt           DateTime            @default(now())
-  updatedAt           DateTime            @updatedAt
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }

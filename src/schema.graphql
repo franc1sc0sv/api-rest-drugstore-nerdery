@@ -82,6 +82,7 @@ type LikeDto {
 type Mutation {
   addImagesToProduct(productIdDto: IdDto!, uploadProductImageInput: [UploadProductImageInput!]!): ProductDto!
   addItemToCart(addItemToCartInput: AddItemToCartInput!): CartDto!
+  calculateTotal: TotalCart!
   createCategory(createCategoryInput: CreateCategoryInput!): CategoryDto!
   createProduct(createProductInput: CreateProductInput!): ProductDto!
   deleteCategory(id: String!): Boolean!
@@ -131,6 +132,11 @@ type Query {
   getProductById(productIdDto: IdDto!): ProductDto!
   getProducts(getProductsInput: GetProductsInput!): ItemConnectionDto!
   getUserLikes: [LikeDto!]!
+}
+
+type TotalCart {
+  id: String!
+  total: Float!
 }
 
 input UpdateCategoryInput {

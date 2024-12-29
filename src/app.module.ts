@@ -22,6 +22,8 @@ import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { OrdersModule } from './modules/orders/orders.module';
+import { StripeModule } from './modules/orders/stripe.module';
 
 @Module({
   imports: [
@@ -52,8 +54,9 @@ import { APP_GUARD } from '@nestjs/core';
     CartsModule,
     LikesModule,
     MailsModule,
+    OrdersModule,
+    StripeModule,
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_GUARD,
