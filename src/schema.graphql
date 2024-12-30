@@ -85,12 +85,14 @@ type Mutation {
   addItemToCart(addItemToCartInput: AddItemToCartInput!): CartDto!
   calculateTotal: TotalCart!
   cancelOrder(orderIdDto: IdDto!): Order!
+  cancelPayment(paymentIntentIdDto: IdDto!): Boolean!
   createCategory(createCategoryInput: CreateCategoryInput!): CategoryDto!
   createOrder: createOrderResponseDto!
   createProduct(createProductInput: CreateProductInput!): ProductDto!
   deleteCategory(id: String!): Boolean!
   deleteLike(productIdDto: IdDto!): Boolean!
   deleteProduct(productIdDto: IdDto!): Boolean!
+  generateNewPaymentIntent(orderIdDto: IdDto!): PaymentIntent!
   likeProduct(productIdDto: IdDto!): LikeDto!
   removeCartItem(cartItemIdDto: IdDto!): Boolean!
   removeImageFromProduct(imageUrlDto: IdDto!, productIdDto: IdDto!): Boolean!

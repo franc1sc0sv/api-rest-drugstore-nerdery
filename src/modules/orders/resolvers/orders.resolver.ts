@@ -8,6 +8,7 @@ import { UseGuards } from '@nestjs/common';
 import { OrdersService } from '../services/orders.service';
 import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { PaymentIntent } from 'src/common/dtos/payment-intent.dto';
 
 @Resolver(() => Order)
 export class OrdersResolver {
@@ -37,5 +38,21 @@ export class OrdersResolver {
   @Mutation(() => Order)
   async cancelOrder(@Args('orderIdDto') orderIdDto: IdDto): Promise<Order> {
     return await this.ordersService.cancelOrder(orderIdDto);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => PaymentIntent)
+  async generateNewPaymentIntent(
+    @Args('orderIdDto') orderIdDto: IdDto,
+  ): Promise<PaymentIntent> {
+    return await this.ordersService.generateNewPaymentIntent(orderIdDto);
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => Boolean)
+  async cancelPayment(
+    @Args('paymentIntentIdDto') paymentIntentIdDto: IdDto,
+  ): Promise<boolean> {
+    return await this.ordersService.cancelPayment(paymentIntentIdDto);
   }
 }

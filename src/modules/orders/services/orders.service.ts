@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
 import { CartsService } from 'src/modules/carts/carts.service';
 import { StripeService } from './stripe.service';
@@ -8,6 +12,7 @@ import { UserDto } from 'src/common/dtos/user.dto';
 import { CreatePaymentIntent } from '../dtos/request/create-payment-intent.dto';
 import { createOrderResponseDto } from '../dtos/response/create-order-response.dto';
 import { IdDto } from 'src/common/dtos/id.dto';
+import { PaymentIntent } from 'src/common/dtos/payment-intent.dto';
 
 @Injectable()
 export class OrdersService {
@@ -77,6 +82,7 @@ export class OrdersService {
     const { id: userId } = user;
     const orders = await this.prismaService.order.findMany({
       where: { userId },
+      orderBy: { orderStatus: 'asc' },
       include: {
         orderItems: {
           select: {
@@ -96,7 +102,7 @@ export class OrdersService {
             productId: true,
           },
         },
-        payments: true,
+        payments: { orderBy: { createdAt: 'asc' } },
       },
     });
 
@@ -190,5 +196,56 @@ export class OrdersService {
     });
 
     return canceledOrder;
+  }
+
+  async generateNewPaymentIntent(orderIdDto: IdDto): Promise<PaymentIntent> {
+    const { id: orderId } = orderIdDto;
+    const order = await this.prismaService.order.findFirst({
+      where: { id: orderId },
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+    const paymentIntentData: CreatePaymentIntent = {
+      amount: order.total,
+      orderId: order.id,
+    };
+
+    const paymentIntent =
+      await this.stripeService.createPaymentIntent(paymentIntentData);
+
+    return await this.prismaService.paymentIntent.create({
+      data: {
+        orderId: order.id,
+        stripePaymentId: paymentIntent.id,
+        stripeClientSecret: paymentIntent.client_secret,
+        stripeStatus: paymentIntent.status,
+        stripeAmount: order.total,
+        stripeCurrency: paymentIntent.currency,
+        stripePaymentMethod: paymentIntent.payment_method as string,
+      },
+    });
+  }
+
+  async cancelPayment(paymentIntentIdDto: IdDto): Promise<boolean> {
+    const { id: paymentIntentId } = paymentIntentIdDto;
+    const paymentIntent = await this.prismaService.paymentIntent.findUnique({
+      where: { id: paymentIntentId },
+    });
+
+    if (!paymentIntent) {
+      throw new NotFoundException('PaymentIntent not found.');
+    }
+
+    if (paymentIntent.stripeStatus === 'succeeded') {
+      throw new BadRequestException('Cannot cancel a completed payment.');
+    }
+
+    await this.stripeService.cancelPaymentIntent({
+      id: paymentIntent.stripePaymentId,
+    });
+
+    return true;
   }
 }

@@ -100,12 +100,7 @@ export class StripeService {
   private async handlePaymentIntentCanceled(
     paymentIntent: Stripe.PaymentIntent,
   ) {
-    const { id: paymentIntentId, metadata } = paymentIntent;
-
-    await this.prismaService.order.update({
-      where: { id: metadata.orderId },
-      data: { orderStatus: 'CANCELED' },
-    });
+    const { id: paymentIntentId } = paymentIntent;
 
     await this.prismaService.paymentIntent.update({
       where: { stripePaymentId: paymentIntentId },
