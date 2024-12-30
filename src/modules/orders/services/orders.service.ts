@@ -73,7 +73,8 @@ export class OrdersService {
     };
   }
 
-  async getOrders(userId: string): Promise<Order[]> {
+  async getOrders(user: UserDto): Promise<Order[]> {
+    const { id: userId } = user;
     const orders = await this.prismaService.order.findMany({
       where: { userId },
       include: {
@@ -93,8 +94,10 @@ export class OrdersService {
     return orders;
   }
 
-  async getOrderById(orderId: string): Promise<Order> {
-    const order = await this.prismaService.order.findUnique({
+  async getOrderById(orderIdDto: IdDto): Promise<Order> {
+    const { id: orderId } = orderIdDto;
+
+    const order = await this.prismaService.order.findFirst({
       where: { id: orderId },
       include: {
         orderItems: {
@@ -119,7 +122,7 @@ export class OrdersService {
 
   async cancelOrder(orderIdDto: IdDto): Promise<Order> {
     const { id: orderId } = orderIdDto;
-    const order = await this.prismaService.order.findUnique({
+    const order = await this.prismaService.order.findFirst({
       where: { id: orderId },
       include: { payments: true },
     });

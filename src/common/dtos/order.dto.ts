@@ -32,5 +32,5 @@ export class Order {
   orderItems?: OrderItem[];
 
   @Field(() => [PaymentIntent])
-  payment?: PaymentIntent[];
+  payments?: PaymentIntent[];
 }

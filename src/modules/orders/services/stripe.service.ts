@@ -16,7 +16,7 @@ export class StripeService {
   ) {}
   async handleStripeWebhook(rawBody: Buffer, signature: string): Promise<void> {
     const endpointSecret = this.configService.get<string>(
-      'STRIPE_WEBHOOK_SECRET',
+      'STRIPE_ENDPOINT_SECRET',
     );
 
     let event: Stripe.Event;
@@ -28,6 +28,7 @@ export class StripeService {
         endpointSecret,
       );
     } catch (err) {
+      console.log(err);
       throw new BadRequestException(
         `Webhook signature verification failed.`,
         err,

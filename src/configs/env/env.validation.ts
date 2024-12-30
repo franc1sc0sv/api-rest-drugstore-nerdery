@@ -56,6 +56,12 @@ export class EnvironmentVariables {
 
   @IsString()
   MAIL_HOST: string;
+
+  @IsString()
+  STRIPE_SECRET_KEY: string;
+
+  @IsString()
+  STRIPE_ENDPOINT_SECRET: string;
 }
 
 export const validate = (config: Record<string, unknown>) => {

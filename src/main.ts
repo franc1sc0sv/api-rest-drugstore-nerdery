@@ -3,14 +3,14 @@ import { AppModule } from './app.module';
 import { PrismaClientExceptionFilter } from 'nestjs-prisma';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { NestConfig, SwaggerConfig } from './configs/config.interface';
 import helmet from 'helmet';
 
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
-import { NestConfig, SwaggerConfig } from './configs/config.interface';
-
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    rawBody: true,
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({

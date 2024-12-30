@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { MiddlewareConsumer, Module, OnModuleInit } from '@nestjs/common';
 
 import config from './configs/config';
 import { validate } from './configs/env/env.validation';
@@ -25,6 +25,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { OrdersModule } from './modules/orders/orders.module';
 import { StripeModule } from './modules/orders/stripe.module';
 import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
+import * as bodyParser from 'body-parser';
 
 @Module({
   imports: [
@@ -66,6 +67,12 @@ import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
   ],
 })
 export class AppModule implements OnModuleInit {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(bodyParser.raw({ type: 'application/json' }))
+      .forRoutes('webhook/stripe');
+  }
+
   async onModuleInit() {
     await seed();
     await seedCategories();

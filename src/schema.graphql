@@ -84,7 +84,9 @@ type Mutation {
   addImagesToProduct(productIdDto: IdDto!, uploadProductImageInput: [UploadProductImageInput!]!): ProductDto!
   addItemToCart(addItemToCartInput: AddItemToCartInput!): CartDto!
   calculateTotal: TotalCart!
+  cancelOrder(orderIdDto: IdDto!): Order!
   createCategory(createCategoryInput: CreateCategoryInput!): CategoryDto!
+  createOrder: createOrderResponseDto!
   createProduct(createProductInput: CreateProductInput!): ProductDto!
   deleteCategory(id: String!): Boolean!
   deleteLike(productIdDto: IdDto!): Boolean!
@@ -97,11 +99,51 @@ type Mutation {
   updateProductStatus(productIdDto: IdDto!, updateProductStatusdInput: UpdateProductStatusInput!): ProductDto!
 }
 
+type Order {
+  createdAt: DateTime!
+  id: String!
+  orderItems: [OrderItem!]!
+  orderStatus: OrderStatus!
+  payments: [PaymentIntent!]!
+  total: Float!
+  updatedAt: DateTime!
+  userId: String!
+}
+
+type OrderItem {
+  id: String!
+  orderId: String!
+  product: ProductDto!
+  productId: String!
+  quantity: Float!
+}
+
+"""OrderStatus"""
+enum OrderStatus {
+  CANCELED
+  COMPLETED
+  FAILED
+  PENDING
+}
+
 type PageInfoDto {
   endCursor: String
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
   startCursor: String
+}
+
+type PaymentIntent {
+  createdAt: DateTime!
+  id: String!
+  orderId: String!
+  stripeAmount: Float!
+  stripeClientSecret: String!
+  stripeCurrency: String!
+  stripePaymentId: String!
+  stripePaymentMethod: String
+  stripeStatus: String!
+  updatedAt: DateTime!
 }
 
 type ProductDto {
@@ -130,6 +172,8 @@ type Query {
   getCart: CartDto!
   getCategories: [CategoryDto!]!
   getCategory(id: String!): CategoryDto!
+  getOrderById(orderIdDto: IdDto!): Order!
+  getOrders: [Order!]!
   getProductById(productIdDto: IdDto!): ProductDto!
   getProducts(getProductsInput: GetProductsInput!): ItemConnectionDto!
   getUserLikes: [LikeDto!]!
@@ -160,4 +204,9 @@ input UpdateProductStatusInput {
 
 input UploadProductImageInput {
   fileBuffer: String!
+}
+
+type createOrderResponseDto {
+  client_secret: String!
+  order: Order!
 }
