@@ -31,10 +31,10 @@ export class CartsResolver {
   @Mutation(() => Boolean)
   @UseGuards(GqlAuthGuard)
   async removeCartItem(
-    @Args('cartIdDto') cartIdDto: IdDto,
+    @Args('cartItemIdDto') cartItemIdDto: IdDto,
     @CurrentUser() user: UserDto,
   ): Promise<boolean> {
-    return await this.cartService.removeCartItem(cartIdDto, user);
+    return await this.cartService.removeCartItem(cartItemIdDto, user);
   }
 
   @Mutation(() => TotalCart)

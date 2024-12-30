@@ -18,13 +18,13 @@ export class ProductDto implements Partial<Product> {
   price: number;
 
   @Field()
-  stock: number;
+  stock?: number;
 
   @Field()
-  isDisabled: boolean;
+  isDisabled?: boolean;
 
   @Field()
-  lowStockNotified: boolean;
+  lowStockNotified?: boolean;
 
   @Field()
   categoryId: string;
@@ -36,8 +36,8 @@ export class ProductDto implements Partial<Product> {
   images?: ProductImage[];
 
   @Field()
-  createdAt: Date;
+  createdAt?: Date;
 
   @Field()
-  updatedAt: Date;
+  updatedAt?: Date;
 }

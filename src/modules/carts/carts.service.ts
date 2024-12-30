@@ -12,13 +12,23 @@ export class CartsService {
 
   async findCartByUserId(user: UserDto): Promise<CartDto> {
     const { id: userId } = user;
-    const cart = await this.prismaService.cart.findUnique({
+    const cart = await this.prismaService.cart.findFirst({
       where: { userId },
       include: {
         cartItems: {
           include: {
-            product: true,
+            product: {
+              select: {
+                id: true,
+                description: true,
+                images: true,
+                name: true,
+                price: true,
+                categoryId: true,
+              },
+            },
           },
+          orderBy: { id: 'asc' },
         },
       },
     });

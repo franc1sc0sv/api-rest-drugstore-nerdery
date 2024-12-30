@@ -90,7 +90,7 @@ type Mutation {
   deleteLike(productIdDto: IdDto!): Boolean!
   deleteProduct(productIdDto: IdDto!): Boolean!
   likeProduct(productIdDto: IdDto!): LikeDto!
-  removeCartItem(cartIdDto: IdDto!): Boolean!
+  removeCartItem(cartItemIdDto: IdDto!): Boolean!
   removeImageFromProduct(imageUrlDto: IdDto!, productIdDto: IdDto!): Boolean!
   updateCategory(id: String!, updateCategoryInput: UpdateCategoryInput!): CategoryDto!
   updateProductDetails(productIdDto: IdDto!, updateProductInput: UpdateProductInput!): ProductDto!
