@@ -20,10 +20,11 @@ import { MailsModule } from './modules/mails/mails.module';
 import { seedProducts } from './seeds/seed-products';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { OrdersModule } from './modules/orders/orders.module';
 import { StripeModule } from './modules/orders/stripe.module';
+import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 
 @Module({
   imports: [
@@ -60,7 +61,7 @@ import { StripeModule } from './modules/orders/stripe.module';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: CustomThrottlerGuard,
     },
   ],
 })

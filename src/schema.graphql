@@ -53,6 +53,7 @@ scalar DateTime
 
 input GetProductsInput {
   after: String
+  before: String
   categoryId: String
   first: Int = 10
 }

@@ -10,8 +10,13 @@ export class GetProductsInput {
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  @IsString({ message: 'El cursor debe ser un string válido' })
+  @IsString({ message: 'El cursor "after" debe ser un string válido' })
   after?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString({ message: 'El cursor "before" debe ser un string válido' })
+  before?: string;
 
   @Field(() => String, { nullable: true })
   @IsOptional()

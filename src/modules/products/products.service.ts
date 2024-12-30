@@ -27,38 +27,62 @@ export class ProductsService {
   async getProducts(
     getProductsInput: GetProductsInput,
   ): Promise<ItemConnectionDto> {
-    const { first, after, categoryId } = getProductsInput;
-    const cursor = after ? { id: after } : undefined;
+    const { first, after, before, categoryId } = getProductsInput;
+
+    let cursorCondition: any = null;
+    let sortOrder: 'asc' | 'desc' = 'asc';
+
+    if (after) {
+      cursorCondition = { createdAt: { gt: new Date(after) } };
+    } else if (before) {
+      cursorCondition = { createdAt: { lt: new Date(before) } };
+      sortOrder = 'desc';
+    }
 
     const products = await this.prismaService.product.findMany({
-      where: categoryId ? { categoryId } : undefined,
+      where: {
+        ...cursorCondition,
+        ...(categoryId ? { categoryId } : {}),
+      },
       take: first,
-      skip: after ? 1 : 0,
-      cursor,
+      orderBy: { createdAt: sortOrder },
       include: {
         category: true,
         images: true,
       },
     });
 
-    const hasNextPage = (await this.prismaService.product.findFirst({
-      where: categoryId
-        ? {
-            categoryId,
-            id: { gt: products[products.length - 1]?.id },
-          }
-        : { id: { gt: products[products.length - 1]?.id } },
-    }))
-      ? true
-      : false;
-    const edges: ItemEdgeDto[] = products.map((product) => ({
+    const normalizedProducts =
+      sortOrder === 'desc' ? products.reverse() : products;
+
+    const hasNextPage = Boolean(
+      await this.prismaService.product.findFirst({
+        where: {
+          ...(categoryId ? { categoryId } : {}),
+          createdAt: {
+            gt: normalizedProducts[normalizedProducts.length - 1]?.createdAt,
+          },
+        },
+      }),
+    );
+
+    const hasPreviousPage = Boolean(
+      await this.prismaService.product.findFirst({
+        where: {
+          ...(categoryId ? { categoryId } : {}),
+          createdAt: { lt: normalizedProducts[0]?.createdAt },
+        },
+      }),
+    );
+
+    const edges: ItemEdgeDto[] = normalizedProducts.map((product) => ({
       node: { ...product },
-      cursor: product.id,
+      cursor: product.createdAt.toISOString(),
     }));
 
     const pageInfo: PageInfoDto = {
       hasNextPage,
-      hasPreviousPage: !!after,
+      hasPreviousPage,
       startCursor: edges.length > 0 ? edges[0].cursor : null,
       endCursor: edges.length > 0 ? edges[edges.length - 1].cursor : null,
     };
