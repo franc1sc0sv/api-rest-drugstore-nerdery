@@ -13,6 +13,8 @@ RUN yarn install --frozen-lockfile
 # Copia todo el código fuente al contenedor
 COPY . .
 
+RUN npx prisma migrate deploy
+
 # Construye la aplicación
 RUN yarn build
 
@@ -34,5 +36,4 @@ COPY --from=builder /app/prisma ./prisma
 # Expone el puerto 3000
 EXPOSE 3000
 
-# Ejecuta migraciones de Prisma y luego inicia la aplicación
-CMD ["sh", "-c", "npx prisma migrate deploy && yarn start:prod"]
+CMD ["yarn start:prod"]
