@@ -81,7 +81,16 @@ export class OrdersService {
         orderItems: {
           select: {
             id: true,
-            product: true,
+            product: {
+              select: {
+                id: true,
+                description: true,
+                images: true,
+                name: true,
+                price: true,
+                categoryId: true,
+              },
+            },
             quantity: true,
             orderId: true,
             productId: true,
@@ -103,7 +112,16 @@ export class OrdersService {
         orderItems: {
           select: {
             id: true,
-            product: true,
+            product: {
+              select: {
+                id: true,
+                description: true,
+                images: true,
+                name: true,
+                price: true,
+                categoryId: true,
+              },
+            },
             quantity: true,
             orderId: true,
             productId: true,
@@ -152,7 +170,16 @@ export class OrdersService {
         orderItems: {
           select: {
             id: true,
-            product: true,
+            product: {
+              select: {
+                id: true,
+                description: true,
+                images: true,
+                name: true,
+                price: true,
+                categoryId: true,
+              },
+            },
             quantity: true,
             orderId: true,
             productId: true,
