@@ -128,6 +128,8 @@ This API provides essential functionality to manage an online store for pharmace
 
 # Deployment
 
+A clarification if you access the api or frontend is normal to start loading very slow because it is a free hosting service automatically puts it in the background if you do not receive notifications with use will become faster
+
 ## API
 
 The API of this project is already deployed in **Render**.
