@@ -56,11 +56,10 @@ This API provides essential functionality to manage an online store for pharmace
 ### **Project configuration with Docker**.
 
 1. Clone the repository:
-   ````bash
+   ```bash
    git clone https://github.com/franc1sc0sv/api-rest-drugstore-nerdery.git
    cd /api-rest-drugstore-nerdery/
    ```
-   ````
 2. Install dependencies:
 
    ```bash
@@ -151,7 +150,7 @@ The Frontend of this project is deployed in **Vercel**. The following can be don
 
 Note, the frontend is logged in by default with a user with the role of CLIENT to make requests.
 
-[Github del frontend](https://github.com/franc1sc0sv/frontend_drugstrore) -made in react, typescript and tailwind
+[Github](https://github.com/franc1sc0sv/frontend_drugstrore) - made in react, typescript and tailwind
 
 [Acces to the frontend here](https://frontend-drugstrore.vercel.app/orders)
 
