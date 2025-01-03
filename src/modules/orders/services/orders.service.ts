@@ -3,16 +3,19 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+
 import { PrismaService } from 'nestjs-prisma';
-import { CartsService } from 'src/modules/carts/carts.service';
+import { CartsService } from '../../carts/carts.service';
 import { StripeService } from './stripe.service';
-import { Order } from 'src/common/dtos/order.dto';
+
+import { Order } from '../../../common/dtos/order.dto';
+
 import { OrderStatus } from '@prisma/client';
-import { UserDto } from 'src/common/dtos/user.dto';
+import { UserDto } from '../../../common/dtos/user.dto';
+import { IdDto } from '../../../common/dtos/id.dto';
 import { CreatePaymentIntent } from '../dtos/request/create-payment-intent.dto';
 import { createOrderResponseDto } from '../dtos/response/create-order-response.dto';
-import { IdDto } from 'src/common/dtos/id.dto';
-import { PaymentIntent } from 'src/common/dtos/payment-intent.dto';
+import { PaymentIntent } from '../../../common/dtos/payment-intent.dto';
 
 @Injectable()
 export class OrdersService {

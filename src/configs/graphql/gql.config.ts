@@ -4,7 +4,7 @@ import { ApolloDriverConfig } from '@nestjs/apollo';
 import { Injectable } from '@nestjs/common';
 import { GqlOptionsFactory } from '@nestjs/graphql';
 import { GraphqlConfig } from '../config.interface';
-import { formatGraphQLError } from 'src/common/utils/graphql-error-formatter';
+import { formatGraphQLError } from 'src/common/utils/graphql-error-formatter.util';
 
 @Injectable()
 export class GqlConfigService implements GqlOptionsFactory {

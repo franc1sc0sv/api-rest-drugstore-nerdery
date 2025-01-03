@@ -5,7 +5,7 @@ import { IdDto } from 'src/common/dtos/id.dto';
 import { PrismaService } from 'nestjs-prisma';
 import { ConfigService } from '@nestjs/config';
 import { OrderStatus } from '@prisma/client';
-import { StripeEventType } from 'src/common/enums/stripeEvenType.enum';
+import { StripeEventType } from '../../../common/enums/stripeEvenType.enum';
 
 @Injectable()
 export class StripeService {

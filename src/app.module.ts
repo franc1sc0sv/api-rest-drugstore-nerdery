@@ -1,23 +1,23 @@
 import { MiddlewareConsumer, Module, OnModuleInit } from '@nestjs/common';
 
-import config from './configs/config';
-import { validate } from './configs/env/env.validation';
+import config from './configs/global.config';
+import { validate } from './configs/env/env.config';
 
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from 'nestjs-prisma';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
-import { GqlConfigService } from './configs/graphql/gql.config.service';
+import { GqlConfigService } from './configs/graphql/gql.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoriesModule } from './modules/categories/categories.module';
-import { seed } from './seeds/seed';
-import { seedCategories } from './seeds/seed-categories';
+
+import { seedCategories } from './seeds/seed-categories.seed';
 import { ImagesModule } from './modules/images/images.module';
 import { ProductsModule } from './modules/products/products.module';
 import { CartsModule } from './modules/carts/carts.module';
 import { LikesModule } from './modules/likes/likes.module';
 import { MailsModule } from './modules/mails/mails.module';
-import { seedProducts } from './seeds/seed-products';
+import { seedProducts } from './seeds/seed-products.seed';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -26,6 +26,7 @@ import { OrdersModule } from './modules/orders/orders.module';
 import { StripeModule } from './modules/orders/stripe.module';
 import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 import * as bodyParser from 'body-parser';
+import { seed } from './seeds/seed-users.seed';
 
 @Module({
   imports: [

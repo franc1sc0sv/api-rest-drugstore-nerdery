@@ -11,7 +11,7 @@ import { UseGuards } from '@nestjs/common';
 import { UpdateProductStatusInput } from './dtos/request/update-product-status.input';
 import { UpdateProductInput } from './dtos/request/update-products.input';
 import { ItemConnectionDto } from './dtos/pagination/item-connection.dto';
-import { GetProductsInput } from './dtos/request/get-products.inpu';
+import { GetProductsInput } from './dtos/request/get-products.input';
 import { ProductDto } from 'src/common/dtos/product.dto';
 
 @Resolver()

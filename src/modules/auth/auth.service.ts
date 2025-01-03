@@ -10,13 +10,14 @@ import { PrismaService } from 'nestjs-prisma';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserInput } from './dtos/request/login-user.input';
 import { AuthResponseDto } from './dtos/response/auth-response.dto';
-import { comparePassword, hashPassword } from 'src/common/utils/bcrypt.util';
+
 import { RegisterUserInput } from './dtos/request/register-user.input';
 import { UserDto } from 'src/common/dtos/user.dto';
 import { ForgetPasswordInput } from './dtos/request/forget-password.input';
 import { ResetPasswordInput } from './dtos/request/reset-password.input';
 import { randomUUID } from 'crypto';
 import { MailsService } from '../mails/mails.service';
+import { hashPassword, comparePassword } from '../../common/utils/bcrypt.util';
 
 @Injectable()
 export class AuthService {
@@ -60,38 +61,27 @@ export class AuthService {
   async validateUser(loginUserInput: LoginUserInput): Promise<UserDto> {
     const { email, password } = loginUserInput;
 
-    try {
-      const user = await this.prismaService.user.findFirst({
-        where: { email },
-      });
+    const user = await this.prismaService.user.findFirst({
+      where: { email },
+    });
 
-      if (!user) {
-        throw new UnauthorizedException('Invalid email or password');
-      }
-
-      const isPasswordValid = await comparePassword(password, user.password);
-      if (!isPasswordValid) {
-        throw new UnauthorizedException('Invalid email or password');
-      }
-
-      return user;
-    } catch (error) {
-      console.error('Error in login:', error);
-      if (error instanceof UnauthorizedException) throw error;
-      throw new InternalServerErrorException('Error logging in user');
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or password');
     }
+
+    const isPasswordValid = await comparePassword(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    return user;
   }
 
   async logout(userId: string, token: string): Promise<boolean> {
-    try {
-      await this.prismaService.revokedToken.create({
-        data: { userId, token },
-      });
-      return true;
-    } catch (error) {
-      console.error('Error in logout:', error);
-      throw new InternalServerErrorException('Error during logout');
-    }
+    await this.prismaService.revokedToken.create({
+      data: { userId, token },
+    });
+    return true;
   }
 
   async forget(forgetPasswordInput: ForgetPasswordInput): Promise<boolean> {
