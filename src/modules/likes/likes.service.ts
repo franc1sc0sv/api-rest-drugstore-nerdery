@@ -1,14 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
-import { IdDto } from 'src/common/models/id.dto.model';
-import { LikeDto } from 'src/common/models/like.dto.model';
-import { UserDto } from 'src/common/models/user.model';
+import { IdDto } from 'src/common/dtos/id.dto';
+import { LikeModel } from 'src/common/models/like.model';
+import { UserModel } from 'src/common/models/user.model';
 
 @Injectable()
 export class LikesService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async likeProduct(productIdDto: IdDto, user: UserDto): Promise<LikeDto> {
+  async likeProduct(productIdDto: IdDto, user: UserModel): Promise<LikeModel> {
     const { id: productId } = productIdDto;
     const { id: userId } = user;
 
@@ -31,7 +31,7 @@ export class LikesService {
     return newLike;
   }
 
-  async deleteLike(productIdDto: IdDto, user: UserDto): Promise<boolean> {
+  async deleteLike(productIdDto: IdDto, user: UserModel): Promise<boolean> {
     const { id: productId } = productIdDto;
     const { id: userId } = user;
 
@@ -50,7 +50,7 @@ export class LikesService {
     return true;
   }
 
-  async getUserLikes(user: UserDto): Promise<LikeDto[]> {
+  async getUserLikes(user: UserModel): Promise<LikeModel[]> {
     const { id: userId } = user;
 
     const likes = await this.prismaService.like.findMany({

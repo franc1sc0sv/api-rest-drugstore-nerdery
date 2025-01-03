@@ -1,7 +1,8 @@
 import { ObjectType, Field } from '@nestjs/graphql';
+import { PaymentIntent } from '@prisma/client';
 
 @ObjectType()
-export class PaymentIntent {
+export class PaymentIntentModel implements Partial<PaymentIntent> {
   @Field()
   id: string;
 

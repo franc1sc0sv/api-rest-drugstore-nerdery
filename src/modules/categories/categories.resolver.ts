@@ -7,38 +7,38 @@ import { UseGuards } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-import { CategoryDto } from 'src/common/models/category.model';
+import { CategoryModel } from 'src/common/models/category.model';
 
 @Resolver()
 export class CategoriesResolver {
   constructor(private readonly categoryService: CategoriesService) {}
 
-  @Query(() => [CategoryDto])
-  async getCategories(): Promise<CategoryDto[]> {
+  @Query(() => [CategoryModel])
+  async getCategories(): Promise<CategoryModel[]> {
     return this.categoryService.getAllCategories();
   }
 
-  @Query(() => CategoryDto)
-  async getCategory(@Args('id') id: string): Promise<CategoryDto> {
+  @Query(() => CategoryModel)
+  async getCategory(@Args('id') id: string): Promise<CategoryModel> {
     return this.categoryService.getCategoryByID(id);
   }
 
-  @Mutation(() => CategoryDto)
+  @Mutation(() => CategoryModel)
   @Roles(Role.MANAGER)
   @UseGuards(GqlAuthGuard, RolesGuard)
   async createCategory(
     @Args('createCategoryInput') createCategoryInput: CreateCategoryInput,
-  ): Promise<CategoryDto> {
+  ): Promise<CategoryModel> {
     return this.categoryService.createCategory(createCategoryInput);
   }
 
-  @Mutation(() => CategoryDto)
+  @Mutation(() => CategoryModel)
   @UseGuards(GqlAuthGuard, RolesGuard)
   @Roles(Role.MANAGER)
   async updateCategory(
     @Args('id') id: string,
     @Args('updateCategoryInput') updateCategoryInput: UpdateCategoryInput,
-  ): Promise<CategoryDto> {
+  ): Promise<CategoryModel> {
     return this.categoryService.updateCategory(id, updateCategoryInput);
   }
 

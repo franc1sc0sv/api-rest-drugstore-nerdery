@@ -15,7 +15,7 @@ registerEnumType(Role, {
 });
 
 @ObjectType()
-export class UserDto implements Partial<User> {
+export class UserModel implements Partial<User> {
   @Field(() => ID)
   @IsUUID()
   id: string;

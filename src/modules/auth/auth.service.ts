@@ -12,7 +12,7 @@ import { LoginUserInput } from './dtos/request/login-user.input';
 import { AuthResponseDto } from './dtos/response/auth-response.dto';
 
 import { RegisterUserInput } from './dtos/request/register-user.input';
-import { UserDto } from 'src/common/models/user.model';
+import { UserModel } from 'src/common/models/user.model';
 import { ForgetPasswordInput } from './dtos/request/forget-password.input';
 import { ResetPasswordInput } from './dtos/request/reset-password.input';
 import { randomUUID } from 'crypto';
@@ -27,7 +27,7 @@ export class AuthService {
     private readonly mailsService: MailsService,
   ) {}
 
-  async register(registerUserInput: RegisterUserInput): Promise<UserDto> {
+  async register(registerUserInput: RegisterUserInput): Promise<UserModel> {
     const { email, password, name } = registerUserInput;
 
     try {
@@ -50,7 +50,7 @@ export class AuthService {
     }
   }
 
-  async login(user: UserDto): Promise<AuthResponseDto> {
+  async login(user: UserModel): Promise<AuthResponseDto> {
     const { id } = user;
     const payload = { userId: id };
     return {
@@ -58,7 +58,7 @@ export class AuthService {
     };
   }
 
-  async validateUser(loginUserInput: LoginUserInput): Promise<UserDto> {
+  async validateUser(loginUserInput: LoginUserInput): Promise<UserModel> {
     const { email, password } = loginUserInput;
 
     const user = await this.prismaService.user.findFirst({

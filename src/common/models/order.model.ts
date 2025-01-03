@@ -1,7 +1,7 @@
 import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
-import { OrderStatus } from '@prisma/client';
-import { OrderItem } from './order-item.model';
-import { PaymentIntent } from './payment-intent.model';
+import { Order, OrderStatus } from '@prisma/client';
+import { OrderItemModel } from './order-item.model';
+import { PaymentIntentModel } from './payment-intent.model';
 
 registerEnumType(OrderStatus, {
   name: 'OrderStatus',
@@ -9,7 +9,7 @@ registerEnumType(OrderStatus, {
 });
 
 @ObjectType()
-export class Order {
+export class OrderModel implements Partial<Order> {
   @Field()
   id: string;
 
@@ -28,9 +28,9 @@ export class Order {
   @Field()
   userId: string;
 
-  @Field(() => [OrderItem])
-  orderItems?: OrderItem[];
+  @Field(() => [OrderItemModel])
+  orderItems?: OrderItemModel[];
 
-  @Field(() => [PaymentIntent])
-  payments?: PaymentIntent[];
+  @Field(() => [PaymentIntentModel])
+  payments?: PaymentIntentModel[];
 }

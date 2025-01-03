@@ -7,27 +7,27 @@ input AddItemToCartInput {
   quantity: Int!
 }
 
-type CartDto {
-  cartItems: [CartItemDto!]!
+type CartItemModel {
   id: String!
-  userId: String!
-}
-
-type CartItemDto {
-  id: String!
-  product: ProductDto!
+  product: ProductModel!
   productId: String!
   quantity: Int!
 }
 
-type CategoryDto {
+type CartModel {
+  cartItems: [CartItemModel!]!
+  id: String!
+  userId: String!
+}
+
+type CategoryModel {
   createdAt: DateTime!
   description: String!
   id: ID!
   name: String!
-  parent: CategoryDto
+  parent: CategoryModel
   parentId: String
-  subCategories: [CategoryDto!]!
+  subCategories: [CategoryModel!]!
   updatedAt: DateTime!
 }
 
@@ -69,55 +69,55 @@ type ItemConnectionDto {
 
 type ItemEdgeDto {
   cursor: String!
-  node: ProductDto!
+  node: ProductModel!
 }
 
-type LikeDto {
+type LikeModel {
   createdAt: DateTime!
   id: String!
-  product: ProductDto!
+  product: ProductModel!
   productId: String!
   userId: String!
 }
 
 type Mutation {
-  addImagesToProduct(productIdDto: IdDto!, uploadProductImageInput: [UploadProductImageInput!]!): ProductDto!
-  addItemToCart(addItemToCartInput: AddItemToCartInput!): CartDto!
+  addImagesToProduct(productIdDto: IdDto!, uploadProductImageInput: [UploadProductImageInput!]!): ProductModel!
+  addItemToCart(addItemToCartInput: AddItemToCartInput!): CartModel!
   calculateTotal: TotalCart!
-  cancelOrder(orderIdDto: IdDto!): Order!
+  cancelOrder(orderIdDto: IdDto!): OrderModel!
   cancelPayment(paymentIntentIdDto: IdDto!): Boolean!
-  createCategory(createCategoryInput: CreateCategoryInput!): CategoryDto!
+  createCategory(createCategoryInput: CreateCategoryInput!): CategoryModel!
   createOrder: createOrderResponseDto!
-  createProduct(createProductInput: CreateProductInput!): ProductDto!
+  createProduct(createProductInput: CreateProductInput!): ProductModel!
   deleteCategory(id: String!): Boolean!
   deleteLike(productIdDto: IdDto!): Boolean!
   deleteProduct(productIdDto: IdDto!): Boolean!
-  generateNewPaymentIntent(orderIdDto: IdDto!): PaymentIntent!
-  likeProduct(productIdDto: IdDto!): LikeDto!
+  generateNewPaymentIntent(orderIdDto: IdDto!): PaymentIntentModel!
+  likeProduct(productIdDto: IdDto!): LikeModel!
   removeCartItem(cartItemIdDto: IdDto!): Boolean!
   removeImageFromProduct(imageUrlDto: IdDto!, productIdDto: IdDto!): Boolean!
-  updateCategory(id: String!, updateCategoryInput: UpdateCategoryInput!): CategoryDto!
-  updateProductDetails(productIdDto: IdDto!, updateProductInput: UpdateProductInput!): ProductDto!
-  updateProductStatus(productIdDto: IdDto!, updateProductStatusdInput: UpdateProductStatusInput!): ProductDto!
+  updateCategory(id: String!, updateCategoryInput: UpdateCategoryInput!): CategoryModel!
+  updateProductDetails(productIdDto: IdDto!, updateProductInput: UpdateProductInput!): ProductModel!
+  updateProductStatus(productIdDto: IdDto!, updateProductStatusdInput: UpdateProductStatusInput!): ProductModel!
 }
 
-type Order {
+type OrderItemModel {
+  id: String!
+  orderId: String!
+  product: ProductModel!
+  productId: String!
+  quantity: Float!
+}
+
+type OrderModel {
   createdAt: DateTime!
   id: String!
-  orderItems: [OrderItem!]!
+  orderItems: [OrderItemModel!]!
   orderStatus: OrderStatus!
-  payments: [PaymentIntent!]!
+  payments: [PaymentIntentModel!]!
   total: Float!
   updatedAt: DateTime!
   userId: String!
-}
-
-type OrderItem {
-  id: String!
-  orderId: String!
-  product: ProductDto!
-  productId: String!
-  quantity: Float!
 }
 
 """OrderStatus"""
@@ -135,7 +135,7 @@ type PageInfoDto {
   startCursor: String
 }
 
-type PaymentIntent {
+type PaymentIntentModel {
   createdAt: DateTime!
   id: String!
   orderId: String!
@@ -148,13 +148,20 @@ type PaymentIntent {
   updatedAt: DateTime!
 }
 
-type ProductDto {
-  category: CategoryDto
+type ProductImageModel {
+  cloudinaryPublicId: String!
+  id: String!
+  productId: String!
+  url: String!
+}
+
+type ProductModel {
+  category: CategoryModel
   categoryId: String!
   createdAt: DateTime!
   description: String!
   id: String!
-  images: [ProductImage!]
+  images: [ProductImageModel!]
   isDisabled: Boolean!
   lowStockNotified: Boolean!
   name: String!
@@ -163,22 +170,15 @@ type ProductDto {
   updatedAt: DateTime!
 }
 
-type ProductImage {
-  cloudinaryPublicId: String!
-  id: String!
-  productId: String!
-  url: String!
-}
-
 type Query {
-  getCart: CartDto!
-  getCategories: [CategoryDto!]!
-  getCategory(id: String!): CategoryDto!
-  getOrderById(orderIdDto: IdDto!): Order!
-  getOrders: [Order!]!
-  getProductById(productIdDto: IdDto!): ProductDto!
+  getCart: CartModel!
+  getCategories: [CategoryModel!]!
+  getCategory(id: String!): CategoryModel!
+  getOrderById(orderIdDto: IdDto!): OrderModel!
+  getOrders: [OrderModel!]!
+  getProductById(productIdDto: IdDto!): ProductModel!
   getProducts(getProductsInput: GetProductsInput!): ItemConnectionDto!
-  getUserLikes: [LikeDto!]!
+  getUserLikes: [LikeModel!]!
 }
 
 type TotalCart {
@@ -210,5 +210,5 @@ input UploadProductImageInput {
 
 type createOrderResponseDto {
   client_secret: String!
-  order: Order!
+  order: OrderModel!
 }

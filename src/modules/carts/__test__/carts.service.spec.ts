@@ -3,14 +3,14 @@ import { CartsService } from '../carts.service';
 import { PrismaService } from 'nestjs-prisma';
 import { mockPrismaService } from '../../../__mocks__/prisma.service.mocks';
 import { NotFoundException } from '@nestjs/common';
-import { CartDto } from 'src/common/models/cart.model';
+import { CartModel } from 'src/common/models/cart.model';
 import { AddItemToCartInput } from '../dtos/request/add-item-to-cart.input';
-import { IdDto } from 'src/common/models/id.dto.model';
-import { UserDto } from 'src/common/models/user.model';
+import { IdDto } from 'src/common/dtos/id.dto';
+import { UserModel } from 'src/common/models/user.model';
 import { randomUUID } from 'crypto';
 import { Role } from '@prisma/client';
 
-const user: UserDto = {
+const user: UserModel = {
   id: randomUUID(),
   email: 'test@example.com',
   password: 'hashedPassword',
@@ -51,7 +51,7 @@ describe('CartsService', () => {
       prismaService.cart.findFirst = jest.fn().mockResolvedValue(null);
 
       try {
-        await cartsService.findCartByUserId({ id: randomUUID() } as UserDto);
+        await cartsService.findCartByUserId({ id: randomUUID() } as UserModel);
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
         expect(e.message).toBe('Cart not found for the given user.');
@@ -59,7 +59,7 @@ describe('CartsService', () => {
     });
 
     it('should return the cart if found', async () => {
-      const mockCart: CartDto = {
+      const mockCart: CartModel = {
         id: randomUUID(),
         userId: randomUUID(),
         cartItems: [],
@@ -68,7 +68,7 @@ describe('CartsService', () => {
 
       const result = await cartsService.findCartByUserId({
         id: randomUUID(),
-      } as UserDto);
+      } as UserModel);
       expect(result).toEqual(mockCart);
     });
   });
@@ -146,7 +146,7 @@ describe('CartsService', () => {
       try {
         await cartsService.removeCartItem(
           { id: randomUUID() } as IdDto,
-          { id: randomUUID() } as UserDto,
+          { id: randomUUID() } as UserModel,
         );
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
@@ -171,7 +171,7 @@ describe('CartsService', () => {
 
       const result = await cartsService.removeCartItem(
         { id: randomUUID() } as IdDto,
-        { id: randomUUID() } as UserDto,
+        { id: randomUUID() } as UserModel,
       );
       expect(result).toBe(true);
       expect(prismaService.cartItem.delete).toHaveBeenCalledWith({
@@ -191,7 +191,7 @@ describe('CartsService', () => {
 
       const result = await cartsService.calculateTotal({
         id: randomUUID(),
-      } as UserDto);
+      } as UserModel);
       expect(result.total).toBe(0);
     });
 
@@ -208,7 +208,7 @@ describe('CartsService', () => {
 
       const result = await cartsService.calculateTotal({
         id: randomUUID(),
-      } as UserDto);
+      } as UserModel);
       expect(result.total).toBe(35);
     });
   });

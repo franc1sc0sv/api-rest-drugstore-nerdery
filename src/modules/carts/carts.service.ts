@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CartDto } from 'src/common/models/cart.model';
+import { CartModel } from 'src/common/models/cart.model';
 import { AddItemToCartInput } from './dtos/request/add-item-to-cart.input';
 import { PrismaService } from 'nestjs-prisma';
-import { IdDto } from 'src/common/models/id.dto.model';
-import { UserDto } from 'src/common/models/user.model';
+import { IdDto } from 'src/common/dtos/id.dto';
+import { UserModel } from 'src/common/models/user.model';
 import { TotalCart } from './dtos/response/total-cart.dto';
 
 @Injectable()
 export class CartsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findCartByUserId(user: UserDto): Promise<CartDto> {
+  async findCartByUserId(user: UserModel): Promise<CartModel> {
     const { id: userId } = user;
     const cart = await this.prismaService.cart.findFirst({
       where: { userId },
@@ -42,8 +42,8 @@ export class CartsService {
 
   async addItemToCart(
     addItemToCartInput: AddItemToCartInput,
-    user: UserDto,
-  ): Promise<CartDto> {
+    user: UserModel,
+  ): Promise<CartModel> {
     const { productId, quantity } = addItemToCartInput;
     const { id: userId } = user;
     let cart = await this.prismaService.cart.findFirst({ where: { userId } });
@@ -76,7 +76,10 @@ export class CartsService {
     return this.findCartByUserId(user);
   }
 
-  async removeCartItem(cartItemIdDto: IdDto, user: UserDto): Promise<boolean> {
+  async removeCartItem(
+    cartItemIdDto: IdDto,
+    user: UserModel,
+  ): Promise<boolean> {
     const { id: cartItemId } = cartItemIdDto;
 
     const cart = await this.findCartByUserId(user);
@@ -94,7 +97,7 @@ export class CartsService {
     return true;
   }
 
-  async calculateTotal(user: UserDto): Promise<TotalCart> {
+  async calculateTotal(user: UserModel): Promise<TotalCart> {
     const cart = await this.findCartByUserId(user);
 
     if (!cart.cartItems || cart.cartItems.length === 0) {

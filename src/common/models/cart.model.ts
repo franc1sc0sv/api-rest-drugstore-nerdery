@@ -1,14 +1,15 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { CartItemDto } from './cart-item.model';
+import { CartItemModel } from './cart-item.model';
+import { Cart } from '@prisma/client';
 
 @ObjectType()
-export class CartDto {
+export class CartModel implements Partial<Cart> {
   @Field(() => String)
   id: string;
 
   @Field(() => String)
   userId: string;
 
-  @Field(() => [CartItemDto])
-  cartItems: CartItemDto[];
+  @Field(() => [CartItemModel])
+  cartItems: CartItemModel[];
 }

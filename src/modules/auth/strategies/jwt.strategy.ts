@@ -6,10 +6,10 @@ import {
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { JwtPayload } from 'src/common/interfaces/jwt-payload.interface';
-import { User } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
+import { UserModel } from 'src/common/models/user.model';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -24,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(req: Request, payload: JwtPayload): Promise<User> {
+  async validate(req: Request, payload: JwtPayload): Promise<UserModel> {
     try {
       const { userId } = payload;
       const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);

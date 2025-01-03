@@ -1,50 +1,54 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 
-import { Order } from 'src/common/models/order.model';
-import { UserDto } from 'src/common/models/user.model';
+import { OrderModel } from 'src/common/models/order.model';
+import { UserModel } from 'src/common/models/user.model';
 import { createOrderResponseDto } from '../dtos/response/create-order-response.dto';
-import { IdDto } from 'src/common/models/id.dto.model';
+import { IdDto } from 'src/common/dtos/id.dto';
 import { UseGuards } from '@nestjs/common';
 import { OrdersService } from '../services/orders.service';
 import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { PaymentIntent } from 'src/common/models/payment-intent.model';
+import { PaymentIntentModel } from 'src/common/models/payment-intent.model';
 
-@Resolver(() => Order)
+@Resolver(() => OrderModel)
 export class OrdersResolver {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Mutation(() => createOrderResponseDto)
   @UseGuards(GqlAuthGuard)
   async createOrder(
-    @CurrentUser() user: UserDto,
+    @CurrentUser() user: UserModel,
   ): Promise<createOrderResponseDto> {
     return await this.ordersService.createOrder(user);
   }
 
-  @Query(() => [Order])
+  @Query(() => [OrderModel])
   @UseGuards(GqlAuthGuard)
-  async getOrders(@CurrentUser() user: UserDto): Promise<Order[]> {
+  async getOrders(@CurrentUser() user: UserModel): Promise<OrderModel[]> {
     return await this.ordersService.getOrders(user);
   }
 
   @UseGuards(GqlAuthGuard)
-  @Query(() => Order)
-  async getOrderById(@Args('orderIdDto') orderIdDto: IdDto): Promise<Order> {
+  @Query(() => OrderModel)
+  async getOrderById(
+    @Args('orderIdDto') orderIdDto: IdDto,
+  ): Promise<OrderModel> {
     return await this.ordersService.getOrderById(orderIdDto);
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => Order)
-  async cancelOrder(@Args('orderIdDto') orderIdDto: IdDto): Promise<Order> {
+  @Mutation(() => OrderModel)
+  async cancelOrder(
+    @Args('orderIdDto') orderIdDto: IdDto,
+  ): Promise<OrderModel> {
     return await this.ordersService.cancelOrder(orderIdDto);
   }
 
   @UseGuards(GqlAuthGuard)
-  @Mutation(() => PaymentIntent)
+  @Mutation(() => PaymentIntentModel)
   async generateNewPaymentIntent(
     @Args('orderIdDto') orderIdDto: IdDto,
-  ): Promise<PaymentIntent> {
+  ): Promise<PaymentIntentModel> {
     return await this.ordersService.generateNewPaymentIntent(orderIdDto);
   }
 

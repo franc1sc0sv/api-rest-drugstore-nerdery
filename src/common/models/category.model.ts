@@ -3,7 +3,7 @@ import { Category } from '@prisma/client';
 import { IsOptional } from 'class-validator';
 
 @ObjectType()
-export class CategoryDto implements Partial<Category> {
+export class CategoryModel implements Partial<Category> {
   @Field(() => ID)
   id: string;
 
@@ -22,10 +22,10 @@ export class CategoryDto implements Partial<Category> {
   @Field()
   updatedAt: Date;
 
-  @Field(() => CategoryDto, { nullable: true })
-  parent?: CategoryDto;
+  @Field(() => CategoryModel, { nullable: true })
+  parent?: CategoryModel;
 
-  @Field(() => [CategoryDto])
+  @Field(() => [CategoryModel])
   @IsOptional()
-  subCategories?: CategoryDto[];
+  subCategories?: CategoryModel[];
 }

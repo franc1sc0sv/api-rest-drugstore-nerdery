@@ -1,8 +1,9 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { ProductDto } from './product.model';
+import { ProductModel } from './product.model';
+import { Like } from '@prisma/client';
 
 @ObjectType()
-export class LikeDto {
+export class LikeModel implements Partial<Like> {
   @Field(() => String)
   id: string;
 
@@ -15,6 +16,6 @@ export class LikeDto {
   @Field(() => Date)
   createdAt: Date;
 
-  @Field(() => ProductDto)
-  product: ProductDto;
+  @Field(() => ProductModel)
+  product: ProductModel;
 }

@@ -8,14 +8,14 @@ import { PrismaService } from 'nestjs-prisma';
 import { CartsService } from '../../carts/carts.service';
 import { StripeService } from './stripe.service';
 
-import { Order } from '../../../common/models/order.model';
+import { OrderModel } from '../../../common/models/order.model';
 
 import { OrderStatus } from '@prisma/client';
-import { UserDto } from '../../../common/models/user.model';
-import { IdDto } from '../../../common/models/id.dto.model';
+import { UserModel } from '../../../common/models/user.model';
+import { IdDto } from '../../../common/dtos/id.dto';
 import { CreatePaymentIntent } from '../dtos/request/create-payment-intent.dto';
 import { createOrderResponseDto } from '../dtos/response/create-order-response.dto';
-import { PaymentIntent } from '../../../common/models/payment-intent.model';
+import { PaymentIntentModel } from '../../../common/models/payment-intent.model';
 
 @Injectable()
 export class OrdersService {
@@ -25,7 +25,7 @@ export class OrdersService {
     private readonly stripeService: StripeService,
   ) {}
 
-  async createOrder(user: UserDto): Promise<createOrderResponseDto> {
+  async createOrder(user: UserModel): Promise<createOrderResponseDto> {
     const cart = await this.cartsService.findCartByUserId(user);
 
     if (!cart.cartItems || cart.cartItems.length === 0) {
@@ -81,7 +81,7 @@ export class OrdersService {
     };
   }
 
-  async getOrders(user: UserDto): Promise<Order[]> {
+  async getOrders(user: UserModel): Promise<OrderModel[]> {
     const { id: userId } = user;
     const orders = await this.prismaService.order.findMany({
       where: { userId },
@@ -112,7 +112,7 @@ export class OrdersService {
     return orders;
   }
 
-  async getOrderById(orderIdDto: IdDto): Promise<Order> {
+  async getOrderById(orderIdDto: IdDto): Promise<OrderModel> {
     const { id: orderId } = orderIdDto;
 
     const order = await this.prismaService.order.findFirst({
@@ -147,7 +147,7 @@ export class OrdersService {
     return order;
   }
 
-  async cancelOrder(orderIdDto: IdDto): Promise<Order> {
+  async cancelOrder(orderIdDto: IdDto): Promise<OrderModel> {
     const { id: orderId } = orderIdDto;
     const order = await this.prismaService.order.findFirst({
       where: { id: orderId },
@@ -201,7 +201,9 @@ export class OrdersService {
     return canceledOrder;
   }
 
-  async generateNewPaymentIntent(orderIdDto: IdDto): Promise<PaymentIntent> {
+  async generateNewPaymentIntent(
+    orderIdDto: IdDto,
+  ): Promise<PaymentIntentModel> {
     const { id: orderId } = orderIdDto;
     const order = await this.prismaService.order.findFirst({
       where: { id: orderId },

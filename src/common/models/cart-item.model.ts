@@ -1,8 +1,8 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { ProductDto } from './product.model';
+import { ProductModel } from './product.model';
 
 @ObjectType()
-export class CartItemDto {
+export class CartItemModel implements Partial<CartItemModel> {
   @Field(() => String)
   id: string;
 
@@ -12,6 +12,6 @@ export class CartItemDto {
   @Field(() => Int)
   quantity: number;
 
-  @Field(() => ProductDto)
-  product: ProductDto;
+  @Field(() => ProductModel)
+  product: ProductModel;
 }

@@ -1,10 +1,10 @@
 import { Field, ObjectType, Float } from '@nestjs/graphql';
 import { Product } from '@prisma/client';
-import { CategoryDto } from './category.model';
-import { ProductImage } from './product-image.model';
+import { CategoryModel } from './category.model';
+import { ProductImageModel } from './product-image.model';
 
 @ObjectType()
-export class ProductDto implements Partial<Product> {
+export class ProductModel implements Partial<Product> {
   @Field()
   id: string;
 
@@ -29,11 +29,11 @@ export class ProductDto implements Partial<Product> {
   @Field()
   categoryId: string;
 
-  @Field(() => CategoryDto, { nullable: true })
-  category?: CategoryDto;
+  @Field(() => CategoryModel, { nullable: true })
+  category?: CategoryModel;
 
-  @Field(() => [ProductImage], { nullable: true })
-  images?: ProductImage[];
+  @Field(() => [ProductImageModel], { nullable: true })
+  images?: ProductImageModel[];
 
   @Field()
   createdAt?: Date;

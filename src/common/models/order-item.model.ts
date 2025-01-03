@@ -1,17 +1,18 @@
 // order-item.type.ts
 import { ObjectType, Field } from '@nestjs/graphql';
-import { ProductDto } from './product.model';
+import { ProductModel } from './product.model';
+import { OrderItem } from '@prisma/client';
 
 @ObjectType()
-export class OrderItem {
+export class OrderItemModel implements Partial<OrderItem> {
   @Field()
   id: string;
 
   @Field()
   productId: string;
 
-  @Field(() => ProductDto)
-  product: ProductDto;
+  @Field(() => ProductModel)
+  product: ProductModel;
 
   @Field()
   quantity: number;

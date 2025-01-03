@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
 import { CreatePaymentIntent } from '../dtos/request/create-payment-intent.dto';
-import { IdDto } from 'src/common/models/id.dto.model';
+import { IdDto } from 'src/common/dtos/id.dto';
 import { PrismaService } from 'nestjs-prisma';
 import { ConfigService } from '@nestjs/config';
 import { OrderStatus } from '@prisma/client';

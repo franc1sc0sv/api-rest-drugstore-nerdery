@@ -1,10 +1,9 @@
 import { Body, Controller, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { LocalAuthGuard } from 'src/common/guards/local-auth.guard';
-import { UserDto } from 'src/common/models/user.model';
+import { UserModel } from 'src/common/models/user.model';
 import { AuthService } from './auth.service';
 import { RestAuthGuard } from 'src/common/guards/rest-auth.guard';
-import { User } from '@prisma/client';
 import { Request } from 'express';
 import { AuthResponseDto } from './dtos/response/auth-response.dto';
 import { RegisterUserInput } from './dtos/request/register-user.input';
@@ -18,14 +17,14 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
-  async login(@CurrentUser() user: UserDto): Promise<AuthResponseDto> {
+  async login(@CurrentUser() user: UserModel): Promise<AuthResponseDto> {
     return await this.authService.login(user);
   }
 
   @Post('register')
   async register(
     @Body() registerUserInput: RegisterUserInput,
-  ): Promise<UserDto> {
+  ): Promise<UserModel> {
     return await this.authService.register(registerUserInput);
   }
 
@@ -49,7 +48,7 @@ export class AuthController {
   @UseGuards(RestAuthGuard)
   async logout(
     @Req() req: Request,
-    @CurrentUser() user: User,
+    @CurrentUser() user: UserModel,
   ): Promise<boolean> {
     const token = req.headers.authorization?.split(' ')[1];
 

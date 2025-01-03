@@ -23,7 +23,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserDto } from 'src/common/models/user.model';
+import { UserModel } from 'src/common/models/user.model';
 import { Role } from '@prisma/client';
 
 jest.mock('../../../common/utils/bcrypt.util', () => ({
@@ -141,7 +141,7 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should return a valid token', async () => {
-      const mockUser: UserDto = {
+      const mockUser: UserModel = {
         id: '123',
         email: 'test@example.com',
         password: 'hashedPassword',

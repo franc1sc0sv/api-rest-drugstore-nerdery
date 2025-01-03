@@ -6,13 +6,13 @@ import {
 import { PrismaService } from 'nestjs-prisma';
 import { CreateCategoryInput } from './dtos/request/create-category.input';
 import { UpdateCategoryInput } from './dtos/request/update-category.input';
-import { CategoryDto } from 'src/common/models/category.model';
+import { CategoryModel } from 'src/common/models/category.model';
 
 @Injectable()
 export class CategoriesService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getAllCategories(): Promise<CategoryDto[]> {
+  async getAllCategories(): Promise<CategoryModel[]> {
     return this.prismaService.category.findMany({
       where: {
         parentId: null,
@@ -24,7 +24,7 @@ export class CategoriesService {
     });
   }
 
-  async getCategoryByID(id: string): Promise<CategoryDto> {
+  async getCategoryByID(id: string): Promise<CategoryModel> {
     const category = this.prismaService.category.findFirst({
       where: { id },
       include: {
@@ -40,7 +40,7 @@ export class CategoriesService {
     return category;
   }
 
-  async createCategory(data: CreateCategoryInput): Promise<CategoryDto> {
+  async createCategory(data: CreateCategoryInput): Promise<CategoryModel> {
     const { name } = data;
 
     const isCategoryRepeted = await this.prismaService.category.findFirst({
@@ -57,7 +57,7 @@ export class CategoriesService {
   async updateCategory(
     id: string,
     data: UpdateCategoryInput,
-  ): Promise<CategoryDto> {
+  ): Promise<CategoryModel> {
     return this.prismaService.category.update({
       where: { id },
       data,
