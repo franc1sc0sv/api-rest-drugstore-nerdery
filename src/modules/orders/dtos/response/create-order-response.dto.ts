@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Order } from 'src/common/dtos/order.dto';
+import { Order } from 'src/common/models/order.model';
 
 @ObjectType()
 export class createOrderResponseDto {

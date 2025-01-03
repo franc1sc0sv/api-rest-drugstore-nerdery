@@ -1,12 +1,12 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { CartsService } from './carts.service';
-import { CartDto } from 'src/common/dtos/cart.dto';
-import { IdDto } from 'src/common/dtos/id.dto';
+import { CartDto } from 'src/common/models/cart.model';
+import { IdDto } from 'src/common/models/id.dto.model';
 import { AddItemToCartInput } from './dtos/request/add-item-to-cart.input';
 import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { UserDto } from 'src/common/dtos/user.dto';
+import { UserDto } from 'src/common/models/user.model';
 import { TotalCart } from './dtos/response/total-cart.dto';
 
 @Resolver()

@@ -5,7 +5,7 @@ import { PrismaService } from 'nestjs-prisma';
 import { CreateProductInput } from './dtos/request/create-products.input';
 import { UploadImageResponseDto } from '../images/dtos/response/upload-image.dto';
 
-import { IdDto } from 'src/common/dtos/id.dto';
+import { IdDto } from 'src/common/models/id.dto.model';
 import { UploadProductImageInput } from './dtos/request/upload-product-images.input';
 import { UpdateProductInput } from './dtos/request/update-products.input';
 import { UpdateProductStatusInput } from './dtos/request/update-product-status.input';
@@ -13,7 +13,7 @@ import { GetProductsInput } from './dtos/request/get-products.input';
 import { ItemConnectionDto } from './dtos/pagination/item-connection.dto';
 import { ItemEdgeDto } from './dtos/pagination/item-edge.dto';
 import { PageInfoDto } from './dtos/pagination/page-info.dto';
-import { ProductDto } from 'src/common/dtos/product.dto';
+import { ProductDto } from 'src/common/models/product.model';
 
 const CLOUDINATY_IMAGES_FOLDER = 'product-images';
 

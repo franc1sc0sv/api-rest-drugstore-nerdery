@@ -7,7 +7,7 @@ import { UseGuards } from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-import { CategoryDto } from 'src/common/dtos/category.dto';
+import { CategoryDto } from 'src/common/models/category.model';
 
 @Resolver()
 export class CategoriesResolver {

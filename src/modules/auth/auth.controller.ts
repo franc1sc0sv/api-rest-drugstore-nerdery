@@ -1,7 +1,7 @@
 import { Body, Controller, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { LocalAuthGuard } from 'src/common/guards/local-auth.guard';
-import { UserDto } from 'src/common/dtos/user.dto';
+import { UserDto } from 'src/common/models/user.model';
 import { AuthService } from './auth.service';
 import { RestAuthGuard } from 'src/common/guards/rest-auth.guard';
 import { User } from '@prisma/client';

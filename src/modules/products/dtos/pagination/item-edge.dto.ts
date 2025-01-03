@@ -1,5 +1,5 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { ProductDto } from 'src/common/dtos/product.dto';
+import { ProductDto } from 'src/common/models/product.model';
 
 @ObjectType()
 export class ItemEdgeDto {

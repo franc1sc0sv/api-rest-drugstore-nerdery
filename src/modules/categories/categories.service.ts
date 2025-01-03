@@ -6,7 +6,7 @@ import {
 import { PrismaService } from 'nestjs-prisma';
 import { CreateCategoryInput } from './dtos/request/create-category.input';
 import { UpdateCategoryInput } from './dtos/request/update-category.input';
-import { CategoryDto } from 'src/common/dtos/category.dto';
+import { CategoryDto } from 'src/common/models/category.model';
 
 @Injectable()
 export class CategoriesService {
@@ -34,7 +34,7 @@ export class CategoriesService {
     });
 
     if (!category) {
-      throw new NotFoundException();
+      throw new NotFoundException('Category does not exist');
     }
 
     return category;

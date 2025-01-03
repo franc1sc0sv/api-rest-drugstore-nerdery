@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { ProductsService } from './products.service';
 import { CreateProductInput } from './dtos/request/create-products.input';
-import { IdDto } from 'src/common/dtos/id.dto';
+import { IdDto } from 'src/common/models/id.dto.model';
 import { UploadProductImageInput } from './dtos/request/upload-product-images.input';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
@@ -12,7 +12,7 @@ import { UpdateProductStatusInput } from './dtos/request/update-product-status.i
 import { UpdateProductInput } from './dtos/request/update-products.input';
 import { ItemConnectionDto } from './dtos/pagination/item-connection.dto';
 import { GetProductsInput } from './dtos/request/get-products.input';
-import { ProductDto } from 'src/common/dtos/product.dto';
+import { ProductDto } from 'src/common/models/product.model';
 
 @Resolver()
 export class ProductsResolver {

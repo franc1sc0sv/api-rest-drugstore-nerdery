@@ -8,14 +8,14 @@ import { PrismaService } from 'nestjs-prisma';
 import { CartsService } from '../../carts/carts.service';
 import { StripeService } from './stripe.service';
 
-import { Order } from '../../../common/dtos/order.dto';
+import { Order } from '../../../common/models/order.model';
 
 import { OrderStatus } from '@prisma/client';
-import { UserDto } from '../../../common/dtos/user.dto';
-import { IdDto } from '../../../common/dtos/id.dto';
+import { UserDto } from '../../../common/models/user.model';
+import { IdDto } from '../../../common/models/id.dto.model';
 import { CreatePaymentIntent } from '../dtos/request/create-payment-intent.dto';
 import { createOrderResponseDto } from '../dtos/response/create-order-response.dto';
-import { PaymentIntent } from '../../../common/dtos/payment-intent.dto';
+import { PaymentIntent } from '../../../common/models/payment-intent.model';
 
 @Injectable()
 export class OrdersService {

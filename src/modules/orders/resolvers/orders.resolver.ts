@@ -1,14 +1,14 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 
-import { Order } from 'src/common/dtos/order.dto';
-import { UserDto } from 'src/common/dtos/user.dto';
+import { Order } from 'src/common/models/order.model';
+import { UserDto } from 'src/common/models/user.model';
 import { createOrderResponseDto } from '../dtos/response/create-order-response.dto';
-import { IdDto } from 'src/common/dtos/id.dto';
+import { IdDto } from 'src/common/models/id.dto.model';
 import { UseGuards } from '@nestjs/common';
 import { OrdersService } from '../services/orders.service';
 import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { PaymentIntent } from 'src/common/dtos/payment-intent.dto';
+import { PaymentIntent } from 'src/common/models/payment-intent.model';
 
 @Resolver(() => Order)
 export class OrdersResolver {

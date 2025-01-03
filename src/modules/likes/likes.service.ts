@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
-import { IdDto } from 'src/common/dtos/id.dto';
-import { LikeDto } from 'src/common/dtos/like.dto';
-import { UserDto } from 'src/common/dtos/user.dto';
+import { IdDto } from 'src/common/models/id.dto.model';
+import { LikeDto } from 'src/common/models/like.dto.model';
+import { UserDto } from 'src/common/models/user.model';
 
 @Injectable()
 export class LikesService {

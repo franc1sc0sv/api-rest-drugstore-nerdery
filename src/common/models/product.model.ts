@@ -1,7 +1,7 @@
 import { Field, ObjectType, Float } from '@nestjs/graphql';
 import { Product } from '@prisma/client';
-import { CategoryDto } from './category.dto';
-import { ProductImage } from './product-image.dto';
+import { CategoryDto } from './category.model';
+import { ProductImage } from './product-image.model';
 
 @ObjectType()
 export class ProductDto implements Partial<Product> {

@@ -1,7 +1,7 @@
 import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 import { OrderStatus } from '@prisma/client';
-import { OrderItem } from './order-item.dto';
-import { PaymentIntent } from './payment-intent.dto';
+import { OrderItem } from './order-item.model';
+import { PaymentIntent } from './payment-intent.model';
 
 registerEnumType(OrderStatus, {
   name: 'OrderStatus',

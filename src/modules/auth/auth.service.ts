@@ -12,7 +12,7 @@ import { LoginUserInput } from './dtos/request/login-user.input';
 import { AuthResponseDto } from './dtos/response/auth-response.dto';
 
 import { RegisterUserInput } from './dtos/request/register-user.input';
-import { UserDto } from 'src/common/dtos/user.dto';
+import { UserDto } from 'src/common/models/user.model';
 import { ForgetPasswordInput } from './dtos/request/forget-password.input';
 import { ResetPasswordInput } from './dtos/request/reset-password.input';
 import { randomUUID } from 'crypto';

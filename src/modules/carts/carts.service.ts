@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CartDto } from 'src/common/dtos/cart.dto';
+import { CartDto } from 'src/common/models/cart.model';
 import { AddItemToCartInput } from './dtos/request/add-item-to-cart.input';
 import { PrismaService } from 'nestjs-prisma';
-import { IdDto } from 'src/common/dtos/id.dto';
-import { UserDto } from 'src/common/dtos/user.dto';
+import { IdDto } from 'src/common/models/id.dto.model';
+import { UserDto } from 'src/common/models/user.model';
 import { TotalCart } from './dtos/response/total-cart.dto';
 
 @Injectable()

@@ -1,10 +1,10 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { LikesService } from './likes.service';
 import { UseGuards } from '@nestjs/common';
-import { LikeDto } from 'src/common/dtos/like.dto';
+import { LikeDto } from 'src/common/models/like.dto.model';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { UserDto } from 'src/common/dtos/user.dto';
-import { IdDto } from 'src/common/dtos/id.dto';
+import { UserDto } from 'src/common/models/user.model';
+import { IdDto } from 'src/common/models/id.dto.model';
 import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
 
 @Resolver()

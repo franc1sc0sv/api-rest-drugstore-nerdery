@@ -23,7 +23,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserDto } from 'src/common/dtos/user.dto';
+import { UserDto } from 'src/common/models/user.model';
 import { Role } from '@prisma/client';
 
 jest.mock('../../../common/utils/bcrypt.util', () => ({
