@@ -142,7 +142,9 @@
       "<rootDir>/.*\\.util\\.ts$",
       "<rootDir>/.*\\.seed\\.ts$",
       "<rootDir>/.*\\.strategy\\.ts$",
-      "<rootDir>/.*\\main\\.ts$"
+      "<rootDir>/.*\\main\\.ts$",
+      "<rootDir>/.*\\.model\\.ts$",
+      "<rootDir>/.*\\.enum\\.ts$"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
