@@ -7,11 +7,15 @@ import { CartModel } from 'src/common/models/cart.model';
 import { AddItemToCartInput } from '../dtos/request/add-item-to-cart.input';
 import { IdDto } from 'src/common/dtos/id.dto';
 import { UserModel } from 'src/common/models/user.model';
-import { randomUUID } from 'crypto';
 import { Role } from '@prisma/client';
 
+const fixedUserId = 'user-12345';
+const fixedProductId = 'product-12345';
+const fixedCartId = 'cart-12345';
+const fixedCartItemId = 'cart-item-12345';
+
 const user: UserModel = {
-  id: randomUUID(),
+  id: fixedUserId,
   email: 'test@example.com',
   password: 'hashedPassword',
   name: 'Test User',
@@ -51,7 +55,7 @@ describe('CartsService', () => {
       prismaService.cart.findFirst = jest.fn().mockResolvedValue(null);
 
       try {
-        await cartsService.findCartByUserId({ id: randomUUID() } as UserModel);
+        await cartsService.findCartByUserId({ id: fixedUserId } as UserModel);
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
         expect(e.message).toBe('Cart not found for the given user.');
@@ -60,14 +64,14 @@ describe('CartsService', () => {
 
     it('should return the cart if found', async () => {
       const mockCart: CartModel = {
-        id: randomUUID(),
-        userId: randomUUID(),
+        id: fixedCartId,
+        userId: fixedUserId,
         cartItems: [],
       };
       prismaService.cart.findFirst = jest.fn().mockResolvedValue(mockCart);
 
       const result = await cartsService.findCartByUserId({
-        id: randomUUID(),
+        id: fixedUserId,
       } as UserModel);
       expect(result).toEqual(mockCart);
     });
@@ -80,40 +84,71 @@ describe('CartsService', () => {
 
     it('should create a new cart if none exists', async () => {
       const addItemToCartInput: AddItemToCartInput = {
-        productId: randomUUID(),
+        productId: fixedProductId,
         quantity: 1,
       };
-      prismaService.cart.findFirst = jest.fn().mockResolvedValue(null);
-      prismaService.cart.create = jest
+
+      prismaService.cart.findFirst = jest
         .fn()
-        .mockResolvedValue({ id: randomUUID(), userId: user.id });
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce({
+          id: fixedCartId,
+          userId: fixedUserId,
+          cartItems: [
+            { id: fixedCartItemId, productId: fixedProductId, quantity: 1 },
+          ],
+        });
+
+      prismaService.cart.create = jest.fn().mockResolvedValue({
+        id: fixedCartId,
+        userId: fixedUserId,
+      });
+
       prismaService.cartItem.create = jest.fn().mockResolvedValue({
-        id: randomUUID(),
-        productId: addItemToCartInput.productId,
+        id: fixedCartItemId,
+        productId: fixedProductId,
         quantity: 1,
       });
 
       const result = await cartsService.addItemToCart(addItemToCartInput, user);
-      expect(result).toBeDefined();
+
       expect(prismaService.cart.create).toHaveBeenCalledWith({
-        data: { userId: user.id },
+        data: { userId: fixedUserId },
       });
+
+      expect(prismaService.cartItem.create).toHaveBeenCalledWith({
+        data: {
+          cartId: fixedCartId,
+          productId: fixedProductId,
+          quantity: 1,
+        },
+      });
+
+      expect(prismaService.cart.findFirst).toHaveBeenCalledWith({
+        where: { userId: fixedUserId },
+      });
+
+      expect(result).toBeDefined();
+      expect(result.id).toBe(fixedCartId);
+      expect(result.cartItems).toEqual([
+        { id: fixedCartItemId, productId: fixedProductId, quantity: 1 },
+      ]);
     });
 
     it('should update the existing cart item if it already exists', async () => {
       const addItemToCartInput: AddItemToCartInput = {
-        productId: randomUUID(),
+        productId: fixedProductId,
         quantity: 2,
       };
 
       const existingCartItem = {
-        id: randomUUID(),
+        id: fixedCartItemId,
         productId: addItemToCartInput.productId,
         quantity: 1,
       };
       const cart = {
-        id: randomUUID(),
-        userId: user.id,
+        id: fixedCartId,
+        userId: fixedUserId,
         cartItems: [existingCartItem],
       };
       prismaService.cart.findFirst = jest.fn().mockResolvedValue(cart);
@@ -121,7 +156,7 @@ describe('CartsService', () => {
         .fn()
         .mockResolvedValue(existingCartItem);
       prismaService.cartItem.update = jest.fn().mockResolvedValue({
-        id: randomUUID(),
+        id: fixedCartItemId,
         productId: addItemToCartInput.productId,
         quantity: 3,
       });
@@ -145,8 +180,8 @@ describe('CartsService', () => {
 
       try {
         await cartsService.removeCartItem(
-          { id: randomUUID() } as IdDto,
-          { id: randomUUID() } as UserModel,
+          { id: fixedCartItemId } as IdDto,
+          { id: fixedUserId } as UserModel,
         );
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
@@ -156,13 +191,13 @@ describe('CartsService', () => {
 
     it('should successfully remove a cart item', async () => {
       const cartItem = {
-        id: randomUUID(),
-        productId: randomUUID(),
+        id: fixedCartItemId,
+        productId: fixedProductId,
         quantity: 1,
       };
       const cart = {
-        id: randomUUID(),
-        userId: randomUUID(),
+        id: fixedCartId,
+        userId: fixedUserId,
         cartItems: [cartItem],
       };
       prismaService.cart.findFirst = jest.fn().mockResolvedValue(cart);
@@ -170,8 +205,8 @@ describe('CartsService', () => {
       prismaService.cartItem.delete = jest.fn().mockResolvedValue(cartItem);
 
       const result = await cartsService.removeCartItem(
-        { id: randomUUID() } as IdDto,
-        { id: randomUUID() } as UserModel,
+        { id: fixedCartItemId } as IdDto,
+        { id: fixedUserId } as UserModel,
       );
       expect(result).toBe(true);
       expect(prismaService.cartItem.delete).toHaveBeenCalledWith({
@@ -186,19 +221,19 @@ describe('CartsService', () => {
     });
 
     it('should return total 0 if the cart has no items', async () => {
-      const cart = { id: randomUUID(), userId: randomUUID(), cartItems: [] };
+      const cart = { id: fixedCartId, userId: fixedUserId, cartItems: [] };
       prismaService.cart.findFirst = jest.fn().mockResolvedValue(cart);
 
       const result = await cartsService.calculateTotal({
-        id: randomUUID(),
+        id: fixedUserId,
       } as UserModel);
       expect(result.total).toBe(0);
     });
 
     it('should return the correct total', async () => {
       const cart = {
-        id: randomUUID(),
-        userId: randomUUID(),
+        id: fixedCartId,
+        userId: fixedUserId,
         cartItems: [
           { product: { price: 10 }, quantity: 2 },
           { product: { price: 5 }, quantity: 3 },
@@ -207,7 +242,7 @@ describe('CartsService', () => {
       prismaService.cart.findFirst = jest.fn().mockResolvedValue(cart);
 
       const result = await cartsService.calculateTotal({
-        id: randomUUID(),
+        id: fixedUserId,
       } as UserModel);
       expect(result.total).toBe(35);
     });

@@ -25,7 +25,7 @@ export class CategoriesService {
   }
 
   async getCategoryByID(id: string): Promise<CategoryModel> {
-    const category = this.prismaService.category.findFirst({
+    const category = await this.prismaService.category.findFirst({
       where: { id },
       include: {
         subCategories: true,

@@ -12,6 +12,7 @@ export class CartsService {
 
   async findCartByUserId(user: UserModel): Promise<CartModel> {
     const { id: userId } = user;
+
     const cart = await this.prismaService.cart.findFirst({
       where: { userId },
       include: {
@@ -46,6 +47,7 @@ export class CartsService {
   ): Promise<CartModel> {
     const { productId, quantity } = addItemToCartInput;
     const { id: userId } = user;
+
     let cart = await this.prismaService.cart.findFirst({ where: { userId } });
 
     if (!cart) {
