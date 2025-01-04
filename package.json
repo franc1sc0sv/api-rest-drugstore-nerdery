@@ -132,7 +132,6 @@
     "coveragePathIgnorePatterns": [
       "<rootDir>/.*\\.module\\.ts$",
       "<rootDir>/.*\\.controllers\\.ts$",
-      "<rootDir>/.*\\.guard\\.ts$",
       "<rootDir>/.*\\.dto\\.ts$",
       "<rootDir>/.*\\.input\\.ts$",
       "<rootDir>/.*\\.resolver\\.ts$",
@@ -141,7 +140,6 @@
       "<rootDir>/.*\\.config\\.ts$",
       "<rootDir>/.*\\.util\\.ts$",
       "<rootDir>/.*\\.seed\\.ts$",
-      "<rootDir>/.*\\.strategy\\.ts$",
       "<rootDir>/.*\\main\\.ts$",
       "<rootDir>/.*\\.model\\.ts$",
       "<rootDir>/.*\\.enum\\.ts$"

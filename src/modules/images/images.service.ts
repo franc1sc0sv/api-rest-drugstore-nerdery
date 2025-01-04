@@ -61,7 +61,6 @@ export class ImagesService {
         publicId: (await result).public_id,
       };
     } catch (error) {
-      console.log(error);
       throw new InternalServerErrorException('Failed to upload image.', error);
     }
   }
