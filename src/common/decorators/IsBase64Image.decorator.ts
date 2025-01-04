@@ -18,7 +18,7 @@ export function IsBase64Image(validationOptions?: ValidationOptions) {
           return typeof value === 'string' && base64ImageRegex.test(value);
         },
         defaultMessage(args: ValidationArguments) {
-          return `${args.property} debe ser una imagen en base64 válida.`;
+          return `${args.property} must be a valid base64 image.`;
         },
       },
     });
