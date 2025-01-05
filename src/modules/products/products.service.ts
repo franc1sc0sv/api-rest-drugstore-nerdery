@@ -204,6 +204,29 @@ export class ProductsService {
     return true;
   }
 
+  async deleteProduct(productIdDto: IdDto): Promise<boolean> {
+    const { id: productId } = productIdDto;
+
+    await this.getProductById(productIdDto);
+
+    const productImages = await this.prismaService.productImage.findMany({
+      where: { productId },
+    });
+
+    await Promise.all(
+      productImages.map((image) =>
+        this.imagesService.deleteImage({
+          publicId: image.cloudinaryPublicId,
+        }),
+      ),
+    );
+
+    await this.prismaService.productImage.deleteMany({ where: { productId } });
+    await this.prismaService.product.delete({ where: { id: productId } });
+
+    return true;
+  }
+
   async getProductById(productIdDto: IdDto) {
     const { id: productId } = productIdDto;
     const product = await this.prismaService.product.findFirst({
@@ -230,25 +253,6 @@ export class ProductsService {
       data: updateProductInput,
       include: { images: true },
     });
-  }
-
-  async deleteProduct(productIdDto: IdDto): Promise<boolean> {
-    const { id: productId } = productIdDto;
-    await this.getProductById(productIdDto);
-
-    const productImages = await this.prismaService.productImage.findMany({
-      where: { productId },
-    });
-
-    productImages.forEach(async (image) => {
-      await this.imagesService.deleteImage({
-        publicId: image.cloudinaryPublicId,
-      });
-    });
-
-    await this.prismaService.productImage.deleteMany({ where: { productId } });
-    await this.prismaService.product.delete({ where: { id: productId } });
-    return true;
   }
 
   async updateProductStatus(
