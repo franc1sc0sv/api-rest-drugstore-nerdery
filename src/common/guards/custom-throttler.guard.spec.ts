@@ -1,52 +1,79 @@
-import { ExecutionContext } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { ThrottlerStorage } from '@nestjs/throttler';
+import { ThrottlerModuleOptions } from '@nestjs/throttler'; // Import this if needed
+import { CustomThrottlerGuard } from './custom-throttler.guard';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import { UnifiedAuthGuard } from './unified-auth.guard';
+import { ExecutionContext } from '@nestjs/common';
 
-describe('UnifiedAuthGuard', () => {
-  let guard: UnifiedAuthGuard;
+describe('CustomThrottlerGuard', () => {
+  let guard: CustomThrottlerGuard;
 
   beforeEach(() => {
-    guard = new UnifiedAuthGuard();
+    const mockOptions: ThrottlerModuleOptions = {} as ThrottlerModuleOptions;
+    const mockStorageService = {} as ThrottlerStorage;
+    const mockReflector = {} as Reflector;
+
+    guard = new CustomThrottlerGuard(
+      mockOptions,
+      mockStorageService,
+      mockReflector,
+    );
   });
 
-  describe('getRequest', () => {
-    it('should return the GraphQL request when context type is "graphql"', () => {
-      const mockGqlContext = {
-        getContext: jest.fn().mockReturnValue({
-          req: { user: { id: 1, role: 'CLIENT' } },
-        }),
-      };
-
-      const mockExecutionContext: Partial<ExecutionContext> = {
-        getType: jest.fn().mockReturnValue('graphql'),
-      };
-
-      jest
-        .spyOn(GqlExecutionContext, 'create')
-        .mockReturnValue(mockGqlContext as unknown as GqlExecutionContext);
-
-      const result = guard.getRequest(mockExecutionContext as ExecutionContext);
-
-      expect(result).toEqual({ user: { id: 1, role: 'CLIENT' } });
-      expect(GqlExecutionContext.create).toHaveBeenCalledWith(
-        mockExecutionContext,
-      );
-    });
-
-    it('should return the HTTP request when context type is "http"', () => {
-      const mockRequest = { user: { id: 2, role: 'MANAGER' } };
+  describe('getRequestResponse', () => {
+    it('should return HTTP request and response for HTTP context', () => {
+      const mockRequest = { method: 'GET' };
+      const mockResponse = { statusCode: 200 };
 
       const mockExecutionContext: Partial<ExecutionContext> = {
         getType: jest.fn().mockReturnValue('http'),
         switchToHttp: jest.fn().mockReturnValue({
           getRequest: jest.fn().mockReturnValue(mockRequest),
+          getResponse: jest.fn().mockReturnValue(mockResponse),
         }),
       };
 
-      const result = guard.getRequest(mockExecutionContext as ExecutionContext);
+      const result = guard.getRequestResponse(
+        mockExecutionContext as ExecutionContext,
+      );
 
-      expect(result).toEqual(mockRequest);
+      expect(result).toEqual({ req: mockRequest, res: mockResponse });
       expect(mockExecutionContext.switchToHttp).toHaveBeenCalled();
+    });
+
+    it('should return GraphQL request and response for GraphQL context', () => {
+      const mockRequest = { method: 'POST' };
+      const mockResponse = { statusCode: 201 };
+
+      const mockGqlContext = {
+        req: mockRequest,
+        res: mockResponse,
+      };
+
+      // Mock GqlExecutionContext.create and getContext
+      const gqlExecutionContextMock = {
+        getContext: jest.fn().mockReturnValue(mockGqlContext),
+      };
+
+      jest
+        .spyOn(GqlExecutionContext, 'create')
+        .mockReturnValue(
+          gqlExecutionContextMock as unknown as GqlExecutionContext,
+        );
+
+      const mockExecutionContext: Partial<ExecutionContext> = {
+        getType: jest.fn().mockReturnValue('graphql'),
+      };
+
+      const result = guard.getRequestResponse(
+        mockExecutionContext as ExecutionContext,
+      );
+
+      expect(result).toEqual({ req: mockRequest, res: mockResponse });
+      expect(GqlExecutionContext.create).toHaveBeenCalledWith(
+        mockExecutionContext,
+      );
+      expect(gqlExecutionContextMock.getContext).toHaveBeenCalled();
     });
   });
 });
