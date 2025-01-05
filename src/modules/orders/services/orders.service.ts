@@ -149,6 +149,7 @@ export class OrdersService {
 
   async cancelOrder(orderIdDto: IdDto): Promise<OrderModel> {
     const { id: orderId } = orderIdDto;
+
     const order = await this.prismaService.order.findFirst({
       where: { id: orderId },
       include: { payments: true },
@@ -164,11 +165,12 @@ export class OrdersService {
 
     const { payments } = order;
 
-    payments.forEach(async (payment) => {
-      await this.stripeService.cancelPaymentIntent({
-        id: payment.stripePaymentId,
-      });
-    });
+    // Asegurarse de cancelar todos los intents de pago
+    await Promise.all(
+      payments.map((payment) =>
+        this.stripeService.cancelPaymentIntent({ id: payment.stripePaymentId }),
+      ),
+    );
 
     const canceledOrder = await this.prismaService.order.update({
       where: { id: orderId },

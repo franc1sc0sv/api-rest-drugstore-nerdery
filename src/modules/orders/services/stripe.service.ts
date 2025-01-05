@@ -28,7 +28,6 @@ export class StripeService {
         endpointSecret,
       );
     } catch (err) {
-      console.log(err);
       throw new BadRequestException(
         `Webhook signature verification failed.`,
         err,

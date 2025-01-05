@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as handlebars from 'handlebars';
 import * as fs from 'fs';
 
@@ -16,7 +16,7 @@ export class MailsService {
     private readonly configService: ConfigService,
   ) {}
 
-  private compileTemplate(templateName: string, context: any): string {
+  compileTemplate(templateName: string, context: any): string {
     const templatePath = path.join(
       __dirname,
       '..',
@@ -58,7 +58,7 @@ export class MailsService {
     await this.sendMail({ to, subject, text, html });
   }
 
-  private async sendMail(sendEmailDto: SendEmailDto) {
+  async sendMail(sendEmailDto: SendEmailDto) {
     const { html, subject, text, to } = sendEmailDto;
 
     const mailOptions = {
@@ -73,8 +73,7 @@ export class MailsService {
       await this.mailerService.sendMail(mailOptions);
       return { message: 'Email sent successfully' };
     } catch (error) {
-      console.error('Error sending email:', error);
-      throw new Error('Error sending email');
+      throw new InternalServerErrorException('Error sending email', error);
     }
   }
 }

@@ -140,9 +140,9 @@
       "<rootDir>/.*\\.config\\.ts$",
       "<rootDir>/.*\\.util\\.ts$",
       "<rootDir>/.*\\.seed\\.ts$",
-      "<rootDir>/.*\\main\\.ts$",
       "<rootDir>/.*\\.model\\.ts$",
-      "<rootDir>/.*\\.enum\\.ts$"
+      "<rootDir>/.*\\.enum\\.ts$",
+      "<rootDir>/main.ts"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
