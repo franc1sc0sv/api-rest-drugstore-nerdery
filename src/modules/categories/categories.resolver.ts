@@ -5,9 +5,9 @@ import { UpdateCategoryInput } from './dtos/request/update-category.input';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UseGuards } from '@nestjs/common';
 import { Role } from '@prisma/client';
-import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { CategoryModel } from 'src/common/models/category.model';
+import { UnifiedAuthGuard } from 'src/common/guards/unified-auth.guard';
 
 @Resolver()
 export class CategoriesResolver {
@@ -25,7 +25,7 @@ export class CategoriesResolver {
 
   @Mutation(() => CategoryModel)
   @Roles(Role.MANAGER)
-  @UseGuards(GqlAuthGuard, RolesGuard)
+  @UseGuards(UnifiedAuthGuard, RolesGuard)
   async createCategory(
     @Args('createCategoryInput') createCategoryInput: CreateCategoryInput,
   ): Promise<CategoryModel> {
@@ -33,7 +33,7 @@ export class CategoriesResolver {
   }
 
   @Mutation(() => CategoryModel)
-  @UseGuards(GqlAuthGuard, RolesGuard)
+  @UseGuards(UnifiedAuthGuard, RolesGuard)
   @Roles(Role.MANAGER)
   async updateCategory(
     @Args('id') id: string,
@@ -43,7 +43,7 @@ export class CategoriesResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseGuards(GqlAuthGuard, RolesGuard)
+  @UseGuards(UnifiedAuthGuard, RolesGuard)
   @Roles(Role.MANAGER)
   async deleteCategory(@Args('id') id: string): Promise<boolean> {
     return this.categoryService.removeCategory(id);

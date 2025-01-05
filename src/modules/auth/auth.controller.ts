@@ -3,13 +3,13 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { LocalAuthGuard } from 'src/common/guards/local-auth.guard';
 import { UserModel } from 'src/common/models/user.model';
 import { AuthService } from './auth.service';
-import { RestAuthGuard } from 'src/common/guards/rest-auth.guard';
 import { Request } from 'express';
 import { AuthResponseDto } from './dtos/response/auth-response.dto';
 import { RegisterUserInput } from './dtos/request/register-user.input';
 import { ForgetPasswordInput } from './dtos/request/forget-password.input';
 import { ResetPasswordInput } from './dtos/request/reset-password.input';
 import { Throttle } from '@nestjs/throttler';
+import { UnifiedAuthGuard } from 'src/common/guards/unified-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -45,7 +45,7 @@ export class AuthController {
   }
 
   @Post('logout')
-  @UseGuards(RestAuthGuard)
+  @UseGuards(UnifiedAuthGuard)
   async logout(
     @Req() req: Request,
     @CurrentUser() user: UserModel,

@@ -5,19 +5,20 @@ import { LikeModel } from 'src/common/models/like.model';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserModel } from 'src/common/models/user.model';
 import { IdDto } from 'src/common/dtos/id.dto';
-import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
+import { UnifiedAuthGuard } from 'src/common/guards/unified-auth.guard';
 
 @Resolver()
 export class LikesResolver {
   constructor(private readonly likeService: LikesService) {}
 
   @Query(() => [LikeModel])
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(UnifiedAuthGuard)
   async getUserLikes(@CurrentUser() user: UserModel): Promise<LikeModel[]> {
     return this.likeService.getUserLikes(user);
   }
 
   @Mutation(() => LikeModel)
+  @UseGuards(UnifiedAuthGuard)
   async likeProduct(
     @Args('productIdDto') productIdDto: IdDto,
     @CurrentUser() user: UserModel,
@@ -26,6 +27,7 @@ export class LikesResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseGuards(UnifiedAuthGuard)
   async deleteLike(
     @Args('productIdDto') productIdDto: IdDto,
     @CurrentUser() user: UserModel,

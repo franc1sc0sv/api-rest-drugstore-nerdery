@@ -5,7 +5,6 @@ import { IdDto } from 'src/common/dtos/id.dto';
 import { UploadProductImageInput } from './dtos/request/upload-product-images.input';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
-import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { UseGuards } from '@nestjs/common';
 import { UpdateProductStatusInput } from './dtos/request/update-product-status.input';
@@ -13,6 +12,7 @@ import { UpdateProductInput } from './dtos/request/update-products.input';
 import { ItemConnectionDto } from './dtos/pagination/item-connection.dto';
 import { GetProductsInput } from './dtos/request/get-products.input';
 import { ProductModel } from 'src/common/models/product.model';
+import { UnifiedAuthGuard } from 'src/common/guards/unified-auth.guard';
 
 @Resolver()
 export class ProductsResolver {
@@ -32,7 +32,7 @@ export class ProductsResolver {
 
   @Mutation(() => ProductModel)
   @Roles(Role.MANAGER)
-  @UseGuards(GqlAuthGuard, RolesGuard)
+  @UseGuards(UnifiedAuthGuard, RolesGuard)
   async updateProductDetails(
     @Args('productIdDto') productIdDto: IdDto,
     @Args('updateProductInput') updateProductInput: UpdateProductInput,
@@ -45,7 +45,7 @@ export class ProductsResolver {
 
   @Mutation(() => ProductModel)
   @Roles(Role.MANAGER)
-  @UseGuards(GqlAuthGuard, RolesGuard)
+  @UseGuards(UnifiedAuthGuard, RolesGuard)
   async updateProductStatus(
     @Args('productIdDto') productIdDto: IdDto,
     @Args('updateProductStatusdInput')
@@ -59,7 +59,7 @@ export class ProductsResolver {
 
   @Mutation(() => Boolean)
   @Roles(Role.MANAGER)
-  @UseGuards(GqlAuthGuard, RolesGuard)
+  @UseGuards(UnifiedAuthGuard, RolesGuard)
   async deleteProduct(
     @Args('productIdDto') productIdDto: IdDto,
   ): Promise<boolean> {
@@ -68,7 +68,7 @@ export class ProductsResolver {
 
   @Mutation(() => ProductModel)
   @Roles(Role.MANAGER)
-  @UseGuards(GqlAuthGuard, RolesGuard)
+  @UseGuards(UnifiedAuthGuard, RolesGuard)
   async createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
   ): Promise<ProductModel> {
@@ -77,7 +77,7 @@ export class ProductsResolver {
 
   @Mutation(() => ProductModel)
   @Roles(Role.MANAGER)
-  @UseGuards(GqlAuthGuard, RolesGuard)
+  @UseGuards(UnifiedAuthGuard, RolesGuard)
   async addImagesToProduct(
     @Args('productIdDto') productIdDto: IdDto,
     @Args('uploadProductImageInput', { type: () => [UploadProductImageInput] })
@@ -91,7 +91,7 @@ export class ProductsResolver {
 
   @Mutation(() => Boolean)
   @Roles(Role.MANAGER)
-  @UseGuards(GqlAuthGuard, RolesGuard)
+  @UseGuards(UnifiedAuthGuard, RolesGuard)
   async removeImageFromProduct(
     @Args('productIdDto') productIdDto: IdDto,
     @Args('imageUrlDto') imageIdDto: IdDto,

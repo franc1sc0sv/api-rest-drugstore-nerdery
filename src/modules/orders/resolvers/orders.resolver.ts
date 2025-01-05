@@ -6,16 +6,16 @@ import { createOrderResponseDto } from '../dtos/response/create-order-response.d
 import { IdDto } from 'src/common/dtos/id.dto';
 import { UseGuards } from '@nestjs/common';
 import { OrdersService } from '../services/orders.service';
-import { GqlAuthGuard } from 'src/common/guards/gql-auth.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { PaymentIntentModel } from 'src/common/models/payment-intent.model';
+import { UnifiedAuthGuard } from 'src/common/guards/unified-auth.guard';
 
 @Resolver(() => OrderModel)
 export class OrdersResolver {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Mutation(() => createOrderResponseDto)
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(UnifiedAuthGuard)
   async createOrder(
     @CurrentUser() user: UserModel,
   ): Promise<createOrderResponseDto> {
@@ -23,12 +23,12 @@ export class OrdersResolver {
   }
 
   @Query(() => [OrderModel])
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(UnifiedAuthGuard)
   async getOrders(@CurrentUser() user: UserModel): Promise<OrderModel[]> {
     return await this.ordersService.getOrders(user);
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(UnifiedAuthGuard)
   @Query(() => OrderModel)
   async getOrderById(
     @Args('orderIdDto') orderIdDto: IdDto,
@@ -36,7 +36,7 @@ export class OrdersResolver {
     return await this.ordersService.getOrderById(orderIdDto);
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(UnifiedAuthGuard)
   @Mutation(() => OrderModel)
   async cancelOrder(
     @Args('orderIdDto') orderIdDto: IdDto,
@@ -44,7 +44,7 @@ export class OrdersResolver {
     return await this.ordersService.cancelOrder(orderIdDto);
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(UnifiedAuthGuard)
   @Mutation(() => PaymentIntentModel)
   async generateNewPaymentIntent(
     @Args('orderIdDto') orderIdDto: IdDto,
@@ -52,7 +52,7 @@ export class OrdersResolver {
     return await this.ordersService.generateNewPaymentIntent(orderIdDto);
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(UnifiedAuthGuard)
   @Mutation(() => Boolean)
   async cancelPayment(
     @Args('paymentIntentIdDto') paymentIntentIdDto: IdDto,
