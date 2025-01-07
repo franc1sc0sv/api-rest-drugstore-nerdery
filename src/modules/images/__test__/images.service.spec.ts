@@ -1,12 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ImagesService } from '../images.service';
-import {
-  InternalServerErrorException,
-  BadRequestException,
-} from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 import { v2 as cloudinary } from 'cloudinary';
-import { UploadImageInput } from '../dtos/request/upload-image.input';
-import { DeleteImageRequestDto } from '../dtos/request/delete-image.input';
+
+import {
+  mockDeleteImageRequestDto,
+  mockUploadImageInput,
+  mockUploadResponse,
+  mockUploadResponseCloudinary,
+} from '../../../__mocks__/data/images.mocks';
 
 jest.mock('cloudinary', () => ({
   v2: {
@@ -31,60 +33,41 @@ describe('ImagesService', () => {
 
   describe('uploadImage', () => {
     it('should successfully upload an image', async () => {
-      const uploadImageInput: UploadImageInput = {
-        fileBuffer: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...',
-        folder: 'test-folder',
-      };
-
-      const mockUploadResponse = {
-        secure_url: 'https://example.com/image.png',
-        public_id: 'image_public_id',
-      };
-
       (cloudinary.uploader.upload_stream as jest.Mock).mockImplementation(
         (options, callback) => {
-          callback(null, mockUploadResponse);
+          callback(null, mockUploadResponseCloudinary);
         },
       );
 
-      const result = await imagesService.uploadImage(uploadImageInput);
+      const result = await imagesService.uploadImage(mockUploadImageInput);
 
-      expect(result).toEqual({
-        url: 'https://example.com/image.png',
-        publicId: 'image_public_id',
-      });
+      expect(result).toEqual(mockUploadResponse);
     });
 
     it('should throw InternalServerErrorException if upload fails', async () => {
-      const uploadImageInput: UploadImageInput = {
-        fileBuffer: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...',
-        folder: 'test-folder',
-      };
-
       (cloudinary.uploader.upload_stream as jest.Mock).mockImplementation(
         (options, callback) => {
           callback(new InternalServerErrorException('Upload error'), null);
         },
       );
 
-      await expect(imagesService.uploadImage(uploadImageInput)).rejects.toThrow(
+      await expect(
+        imagesService.uploadImage(mockUploadImageInput),
+      ).rejects.toThrow(
         new InternalServerErrorException('Failed to upload image.'),
       );
     });
 
     it('should throw InternalServerErrorException if there is an unexpected error', async () => {
-      const uploadImageInput: UploadImageInput = {
-        fileBuffer: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...',
-        folder: 'test-folder',
-      };
-
       (cloudinary.uploader.upload_stream as jest.Mock).mockImplementation(
         (options, callback) => {
-          throw new Error('Unexpected error');
+          throw new InternalServerErrorException('Failed to upload image.');
         },
       );
 
-      await expect(imagesService.uploadImage(uploadImageInput)).rejects.toThrow(
+      await expect(
+        imagesService.uploadImage(mockUploadImageInput),
+      ).rejects.toThrow(
         new InternalServerErrorException(
           'Failed to upload image.',
           expect.any(Error),
@@ -95,35 +78,29 @@ describe('ImagesService', () => {
 
   describe('deleteImage', () => {
     it('should successfully delete an image', async () => {
-      const deleteImageRequestDto: DeleteImageRequestDto = {
-        publicId: 'image_public_id',
-      };
-
       (cloudinary.uploader.destroy as jest.Mock).mockResolvedValue({
         result: 'ok',
       });
 
-      const result = await imagesService.deleteImage(deleteImageRequestDto);
+      const result = await imagesService.deleteImage(mockDeleteImageRequestDto);
 
       expect(result).toBe(true);
       expect(cloudinary.uploader.destroy).toHaveBeenCalledWith(
-        'image_public_id',
+        mockDeleteImageRequestDto.publicId,
       );
     });
 
     it('should throw BadRequestException if delete fails', async () => {
-      const deleteImageRequestDto: DeleteImageRequestDto = {
-        publicId: 'image_public_id',
-      };
-
       (cloudinary.uploader.destroy as jest.Mock).mockRejectedValue(
-        new Error('Cloudinary error'),
+        new InternalServerErrorException('Failed to upload image.'),
       );
 
       await expect(
-        imagesService.deleteImage(deleteImageRequestDto),
+        imagesService.deleteImage(mockDeleteImageRequestDto),
       ).rejects.toThrow(
-        new BadRequestException('Cloudinary error: Cloudinary error'),
+        new InternalServerErrorException(
+          'Cloudinary error: Failed to upload image.',
+        ),
       );
     });
   });

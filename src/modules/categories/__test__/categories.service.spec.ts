@@ -5,7 +5,10 @@ import { CategoriesService } from '../categories.service';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { CreateCategoryInput } from '../dtos/request/create-category.input';
 import { UpdateCategoryInput } from '../dtos/request/update-category.input';
-import { randomUUID } from 'crypto';
+import {
+  mockCategory,
+  mockCategories,
+} from '../../../__mocks__/data/categories.mocks'; // Importa los mocks
 
 describe('CategoriesService', () => {
   let categoriesService: CategoriesService;
@@ -28,7 +31,6 @@ describe('CategoriesService', () => {
 
   describe('getAllCategories', () => {
     it('should return all categories', async () => {
-      const mockCategories = [{ id: randomUUID(), name: 'Category 1' }];
       prismaService.category.findMany = jest
         .fn()
         .mockResolvedValue(mockCategories);
@@ -44,12 +46,11 @@ describe('CategoriesService', () => {
       prismaService.category.findFirst = jest.fn().mockResolvedValue(null);
 
       await expect(
-        categoriesService.getCategoryByID(randomUUID()),
+        categoriesService.getCategoryByID(mockCategory.id),
       ).rejects.toThrow(NotFoundException);
     });
 
     it('should return the category if found', async () => {
-      const mockCategory = { id: randomUUID(), name: 'Category 1' };
       prismaService.category.findFirst = jest
         .fn()
         .mockResolvedValue(mockCategory);
@@ -61,13 +62,14 @@ describe('CategoriesService', () => {
 
   describe('createCategory', () => {
     it('should throw ConflictException if category name already exists', async () => {
-      const createCategoryInput: CreateCategoryInput = {
-        name: 'Category 1',
-        description: 'a',
-      };
       prismaService.category.findFirst = jest
         .fn()
-        .mockResolvedValue({ id: randomUUID(), name: 'Category 1' });
+        .mockResolvedValue(mockCategory);
+
+      const createCategoryInput: CreateCategoryInput = {
+        name: mockCategory.name,
+        description: mockCategory.description,
+      };
 
       await expect(
         categoriesService.createCategory(createCategoryInput),
@@ -75,19 +77,17 @@ describe('CategoriesService', () => {
     });
 
     it('should create a category if name is unique', async () => {
-      const createCategoryInput: CreateCategoryInput = {
-        name: 'Category 1',
-        description: 'a',
-      };
-      const createdCategory = { id: randomUUID(), ...createCategoryInput };
       prismaService.category.findFirst = jest.fn().mockResolvedValue(null);
-      prismaService.category.create = jest
-        .fn()
-        .mockResolvedValue(createdCategory);
+      prismaService.category.create = jest.fn().mockResolvedValue(mockCategory);
+
+      const createCategoryInput: CreateCategoryInput = {
+        name: mockCategory.name,
+        description: mockCategory.description,
+      };
 
       const result =
         await categoriesService.createCategory(createCategoryInput);
-      expect(result).toEqual(createdCategory);
+      expect(result).toEqual(mockCategory);
       expect(prismaService.category.create).toHaveBeenCalledWith({
         data: createCategoryInput,
       });
@@ -96,22 +96,19 @@ describe('CategoriesService', () => {
 
   describe('updateCategory', () => {
     it('should update and return the category', async () => {
-      const id = randomUUID();
+      prismaService.category.update = jest.fn().mockResolvedValue(mockCategory);
+
       const updateCategoryInput: UpdateCategoryInput = {
-        name: 'Updated Category',
+        name: mockCategory.name,
       };
-      const updatedCategory = { id, ...updateCategoryInput };
-      prismaService.category.update = jest
-        .fn()
-        .mockResolvedValue(updatedCategory);
 
       const result = await categoriesService.updateCategory(
-        id,
+        mockCategory.id,
         updateCategoryInput,
       );
-      expect(result).toEqual(updatedCategory);
+      expect(result).toEqual(mockCategory);
       expect(prismaService.category.update).toHaveBeenCalledWith({
-        where: { id },
+        where: { id: mockCategory.id },
         data: updateCategoryInput,
       });
     });
@@ -119,13 +116,14 @@ describe('CategoriesService', () => {
 
   describe('removeCategory', () => {
     it('should remove the category', async () => {
-      const id = randomUUID();
-      prismaService.category.delete = jest.fn().mockResolvedValue({ id });
+      prismaService.category.delete = jest
+        .fn()
+        .mockResolvedValue({ id: mockCategory.id });
 
-      const result = await categoriesService.removeCategory(id);
+      const result = await categoriesService.removeCategory(mockCategory.id);
       expect(result).toBe(true);
       expect(prismaService.category.delete).toHaveBeenCalledWith({
-        where: { id },
+        where: { id: mockCategory.id },
       });
     });
   });
