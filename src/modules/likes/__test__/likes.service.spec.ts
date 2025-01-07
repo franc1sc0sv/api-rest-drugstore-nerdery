@@ -3,27 +3,9 @@ import { LikesService } from '../likes.service';
 import { PrismaService } from 'nestjs-prisma';
 import { mockPrismaService } from '../../../__mocks__/dependecies/prisma.service.mocks';
 import { NotFoundException } from '@nestjs/common';
-import { LikeModel } from 'src/common/models/like.model';
-import { IdDto } from 'src/common/dtos/id.dto';
-import { UserModel } from 'src/common/models/user.model';
-import { Role } from '@prisma/client';
 
-const fixedUserId = 'user-12345';
-const fixedProductId = 'product-12345';
-const fixedLikeId = 'like-12345';
-
-const user: UserModel = {
-  id: fixedUserId,
-  email: 'test@example.com',
-  password: 'hashedPassword',
-  name: 'Test User',
-  role: Role.CLIENT,
-  resetToken: null,
-  resetTokenExpiry: null,
-  stripeCustomerId: null,
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
+import { mockLike, mockLikes } from '../../../__mocks__/data/likes.mocks';
+import { mockUser } from '../../../__mocks__/data/user.mocks';
 
 describe('LikesService', () => {
   let likesService: LikesService;
@@ -45,19 +27,11 @@ describe('LikesService', () => {
   });
 
   describe('likeProduct', () => {
-    it('should be defined', () => {
-      expect(likesService.likeProduct).toBeDefined();
-    });
-
     it('should throw an error if the user already likes the product', async () => {
-      prismaService.like.findFirst = jest.fn().mockResolvedValue({
-        id: fixedLikeId,
-        productId: fixedProductId,
-        userId: fixedUserId,
-      });
+      prismaService.like.findFirst = jest.fn().mockResolvedValue(mockLike);
 
       try {
-        await likesService.likeProduct({ id: fixedProductId } as IdDto, user);
+        await likesService.likeProduct({ id: mockLike.productId }, mockUser);
       } catch (e) {
         expect(e).toBeInstanceOf(Error);
         expect(e.message).toBe('User has already liked this product');
@@ -67,42 +41,33 @@ describe('LikesService', () => {
     it('should create a new like for a product', async () => {
       prismaService.like.findFirst = jest.fn().mockResolvedValueOnce(null);
 
-      prismaService.like.create = jest.fn().mockResolvedValue({
-        id: fixedLikeId,
-        productId: fixedProductId,
-        userId: fixedUserId,
-        product: {},
-      });
+      prismaService.like.create = jest.fn().mockResolvedValue(mockLike);
 
       const result = await likesService.likeProduct(
-        { id: fixedProductId } as IdDto,
-        user,
+        { id: mockLike.productId },
+        mockUser,
       );
 
       expect(prismaService.like.create).toHaveBeenCalledWith({
         data: {
-          productId: fixedProductId,
-          userId: fixedUserId,
+          productId: mockLike.productId,
+          userId: mockUser.id,
         },
         include: { product: true },
       });
 
       expect(result).toBeDefined();
-      expect(result.id).toBe(fixedLikeId);
-      expect(result.productId).toBe(fixedProductId);
+      expect(result.id).toBe(mockLike.id);
+      expect(result.productId).toBe(mockLike.productId);
     });
   });
 
   describe('deleteLike', () => {
-    it('should be defined', () => {
-      expect(likesService.deleteLike).toBeDefined();
-    });
-
     it('should throw NotFoundException if like does not exist', async () => {
       prismaService.like.findFirst = jest.fn().mockResolvedValue(null);
 
       try {
-        await likesService.deleteLike({ id: fixedProductId } as IdDto, user);
+        await likesService.likeProduct({ id: mockLike.productId }, mockUser);
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
         expect(e.message).toBe('Like not found');
@@ -110,21 +75,18 @@ describe('LikesService', () => {
     });
 
     it('should delete the like and return true', async () => {
-      prismaService.like.findFirst = jest.fn().mockResolvedValue({
-        id: fixedLikeId,
-        productId: fixedProductId,
-        userId: fixedUserId,
-      });
+      prismaService.like.findFirst = jest.fn().mockResolvedValue(mockLike);
 
-      prismaService.like.delete = jest.fn().mockResolvedValue({});
+      prismaService.like.delete = jest.fn().mockResolvedValue(mockLike);
 
       const result = await likesService.deleteLike(
-        { id: fixedProductId } as IdDto,
-        user,
+        { id: mockLike.productId },
+        mockUser,
       );
+
       expect(result).toBe(true);
       expect(prismaService.like.delete).toHaveBeenCalledWith({
-        where: { id: fixedLikeId },
+        where: { id: mockLike.id },
       });
     });
   });
@@ -135,25 +97,9 @@ describe('LikesService', () => {
     });
 
     it('should return user likes', async () => {
-      const mockLikes: LikeModel[] = [
-        {
-          id: fixedLikeId,
-          productId: fixedProductId,
-          userId: fixedUserId,
-          product: {
-            id: 'produc-123',
-            categoryId: 'category-123',
-            description: 'a',
-            name: 'aa',
-            price: 12,
-          },
-          createdAt: new Date(),
-        },
-      ];
-
       prismaService.like.findMany = jest.fn().mockResolvedValueOnce(mockLikes);
 
-      const result = await likesService.getUserLikes(user);
+      const result = await likesService.getUserLikes(mockUser);
       expect(result).toEqual(mockLikes);
     });
 
@@ -161,7 +107,7 @@ describe('LikesService', () => {
       prismaService.like.findMany = jest.fn().mockResolvedValueOnce([]);
 
       try {
-        await likesService.getUserLikes(user);
+        await likesService.getUserLikes(mockUser);
       } catch (e) {
         expect(e).toBeInstanceOf(NotFoundException);
         expect(e.message).toBe('No likes found for the user');
