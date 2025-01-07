@@ -1,32 +1,35 @@
 import { Role } from '@prisma/client';
+import { faker } from '@faker-js/faker';
 import { UserModel } from 'src/common/models/user.model';
 import { LoginUserInput } from 'src/modules/auth/dtos/request/login-user.input';
 import { RegisterUserInput } from 'src/modules/auth/dtos/request/register-user.input';
 
+const mockPassword = 'Test1234!';
+
 export const mockUser: UserModel = {
-  id: '5a7d2c31-67e4-4a0b-95db-4394ad8f62cd',
-  email: 'test@example.com',
-  name: 'Test1234!',
+  id: faker.string.uuid(),
+  email: faker.internet.email(),
+  name: faker.internet.displayName(),
   role: Role.CLIENT,
   password: 'hashedPassword',
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: faker.date.past(),
+  updatedAt: faker.date.recent(),
 };
 
 export const mockRegisterUserInput: RegisterUserInput = {
   email: mockUser.email,
-  password: 'Test1234!',
+  password: mockPassword,
   name: mockUser.name,
 };
 
 export const mockLoginUserInput: LoginUserInput = {
   email: mockUser.email,
-  password: 'Test1234!',
+  password: mockPassword,
 };
 
 export const mockLoginUserWrongInput: LoginUserInput = {
-  email: 'wrong@example.com',
-  password: 'Test1234!',
+  email: faker.internet.email(),
+  password: mockPassword,
 };
 
-export const mockToken = 'valid-token';
+export const mockToken = faker.string.uuid();

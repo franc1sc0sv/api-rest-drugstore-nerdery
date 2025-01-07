@@ -6,8 +6,10 @@ import { NotFoundException } from '@nestjs/common';
 
 import { mockUser } from '../../../__mocks__/data/user.mocks';
 import {
+  fixedQuantity,
   mockAddNewItemToCartInput,
   mockCart,
+  mockCartCalculateTotal,
   mockCartItem,
 } from '../../../__mocks__/data/cart.mocks';
 
@@ -77,15 +79,13 @@ describe('CartsService', () => {
         data: {
           cartId: mockCart.id,
           productId: mockAddNewItemToCartInput.productId,
-          quantity: 1,
+          quantity: fixedQuantity,
         },
       });
 
       expect(prismaService.cart.findFirst).toHaveBeenCalledWith({
         where: { userId: mockUser.id },
       });
-
-      console.log(result.cartItems);
 
       expect(result).toBeDefined();
       expect(result.id).toBe(mockCart.id);
@@ -108,7 +108,7 @@ describe('CartsService', () => {
       expect(result).toBeDefined();
       expect(prismaService.cartItem.update).toHaveBeenCalledWith({
         where: { id: mockCartItem.id },
-        data: { quantity: 2 },
+        data: { quantity: fixedQuantity + mockCartItem.quantity },
       });
     });
   });
@@ -152,10 +152,16 @@ describe('CartsService', () => {
     });
 
     it('should return the correct total', async () => {
-      prismaService.cart.findFirst = jest.fn().mockResolvedValue(mockCart);
-
+      prismaService.cart.findFirst = jest
+        .fn()
+        .mockResolvedValue(mockCartCalculateTotal);
+      const expectedTotal = mockCartCalculateTotal.cartItems.reduce(
+        (sum, item) => sum + item.quantity * item.product.price,
+        0,
+      );
       const result = await cartsService.calculateTotal(mockUser);
-      expect(result.total).toBe(35);
+      expect(result.total).toBeGreaterThan(0);
+      expect(result.total).toBe(expectedTotal);
     });
   });
 });
