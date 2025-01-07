@@ -6,7 +6,7 @@ import { LoginUserInput } from '../dtos/request/login-user.input';
 import { UserModel } from 'src/common/models/user.model';
 import { PrismaService } from 'nestjs-prisma';
 import { comparePassword } from '../../../common/utils/bcrypt.util';
-import { mockPrismaService } from '../../../__mocks__/prisma.service.mocks';
+import { mockPrismaService } from '../../../__mocks__/dependecies/prisma.service.mocks';
 
 jest.mock('../../../common/utils/bcrypt.util');
 

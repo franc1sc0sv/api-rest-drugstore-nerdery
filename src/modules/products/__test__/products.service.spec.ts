@@ -3,7 +3,7 @@ import { PrismaService } from 'nestjs-prisma';
 import { ProductsService } from '../products.service';
 import { ImagesService } from '../../images/images.service';
 import { NotFoundException } from '@nestjs/common';
-import { mockPrismaService } from '../../../__mocks__/prisma.service.mocks';
+import { mockPrismaService } from '../../../__mocks__/dependecies/prisma.service.mocks';
 
 const mockProducts = [
   {

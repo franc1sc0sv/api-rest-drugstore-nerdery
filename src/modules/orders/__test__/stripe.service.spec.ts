@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StripeService } from '../services/stripe.service';
 import { PrismaService } from 'nestjs-prisma';
-import { mockPrismaService } from '../../../__mocks__/prisma.service.mocks';
+import { mockPrismaService } from '../../../__mocks__/dependecies/prisma.service.mocks';
 import { ConfigService } from '@nestjs/config';
 import Stripe from 'stripe';
 import { BadRequestException } from '@nestjs/common';

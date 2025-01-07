@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { Role } from '@prisma/client';
-import { mockPrismaService } from '../../../__mocks__/prisma.service.mocks';
+import { mockPrismaService } from '../../../__mocks__/dependecies/prisma.service.mocks';
 
 describe('JwtStrategy', () => {
   let jwtStrategy: JwtStrategy;

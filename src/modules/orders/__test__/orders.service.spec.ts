@@ -4,7 +4,7 @@ import { OrdersService } from '../services/orders.service';
 import { CartsService } from '../../carts/carts.service';
 import { StripeService } from '../services/stripe.service';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { mockPrismaService } from '../../../__mocks__/prisma.service.mocks';
+import { mockPrismaService } from '../../../__mocks__/dependecies/prisma.service.mocks';
 import { UserModel } from '../../../common/models/user.model';
 import { OrderStatus } from '@prisma/client';
 import Stripe from 'stripe';

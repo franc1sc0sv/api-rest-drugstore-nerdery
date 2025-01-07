@@ -30,10 +30,6 @@ describe('ImagesService', () => {
   });
 
   describe('uploadImage', () => {
-    it('should be defined', () => {
-      expect(imagesService.uploadImage).toBeDefined();
-    });
-
     it('should successfully upload an image', async () => {
       const uploadImageInput: UploadImageInput = {
         fileBuffer: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...',
@@ -98,10 +94,6 @@ describe('ImagesService', () => {
   });
 
   describe('deleteImage', () => {
-    it('should be defined', () => {
-      expect(imagesService.deleteImage).toBeDefined();
-    });
-
     it('should successfully delete an image', async () => {
       const deleteImageRequestDto: DeleteImageRequestDto = {
         publicId: 'image_public_id',

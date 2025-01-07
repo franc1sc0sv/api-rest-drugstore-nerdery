@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LikesService } from '../likes.service';
 import { PrismaService } from 'nestjs-prisma';
-import { mockPrismaService } from '../../../__mocks__/prisma.service.mocks';
+import { mockPrismaService } from '../../../__mocks__/dependecies/prisma.service.mocks';
 import { NotFoundException } from '@nestjs/common';
 import { LikeModel } from 'src/common/models/like.model';
 import { IdDto } from 'src/common/dtos/id.dto';

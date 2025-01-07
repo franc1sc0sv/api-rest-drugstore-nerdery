@@ -5,17 +5,15 @@ import { AuthService } from '../auth.service';
 import { PrismaService } from 'nestjs-prisma';
 import { MailsService } from '../../mails/mails.service';
 
-import { mockPrismaService } from '../../../__mocks__/prisma.service.mocks';
-import { mockJwtService } from '../../../__mocks__/jwt.service.mocks';
-import { mockMailsService } from '../../../__mocks__/mails.service.mocks';
-
-import { RegisterUserInput } from '../dtos/request/register-user.input';
+import { mockPrismaService } from '../../../__mocks__/dependecies/prisma.service.mocks';
+import { mockJwtService } from '../../../__mocks__/dependecies/jwt.service.mocks';
+import { mockMailsService } from '../../../__mocks__/dependecies/mails.service.mocks';
 
 import {
   comparePassword,
   hashPassword,
 } from '../../../common/utils/bcrypt.util';
-import { randomUUID } from 'crypto';
+
 import {
   BadRequestException,
   ConflictException,
@@ -23,8 +21,14 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserModel } from 'src/common/models/user.model';
-import { Role } from '@prisma/client';
+
+import {
+  mockLoginUserInput,
+  mockToken,
+  mockUser,
+  mockRegisterUserInput,
+  mockLoginUserWrongInput,
+} from '../../../__mocks__/data/user.mocks';
 
 jest.mock('../../../common/utils/bcrypt.util', () => ({
   hashPassword: jest.fn(),
@@ -63,65 +67,40 @@ describe('AuthService', () => {
   });
 
   describe('register', () => {
-    it('should be defined', () => {
-      expect(authService.register).toBeDefined();
-    });
-
     it('should register a new user successfully', async () => {
-      const registerUserInput: RegisterUserInput = {
-        email: 'test@example.com',
-        password: 'Test1234!',
-        name: 'Test User',
-      };
-
       prismaService.user.findFirst = jest.fn().mockResolvedValue(null);
-      prismaService.user.create = jest.fn().mockResolvedValue({
-        id: randomUUID(),
-        email: registerUserInput.email,
-        name: registerUserInput.name,
-        password: 'hashedPassword',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
+      prismaService.user.create = jest.fn().mockResolvedValue(mockUser);
 
       (hashPassword as jest.Mock).mockResolvedValue('hashedPassword');
 
-      const result = await authService.register(registerUserInput);
+      const result = await authService.register(mockRegisterUserInput);
 
       expect(prismaService.user.findFirst).toHaveBeenCalledWith({
-        where: { email: registerUserInput.email },
+        where: { email: mockRegisterUserInput.email },
       });
 
       expect(prismaService.user.create).toHaveBeenCalledWith({
         data: {
-          email: registerUserInput.email,
+          email: mockRegisterUserInput.email,
           password: 'hashedPassword',
-          name: registerUserInput.name,
+          name: mockRegisterUserInput.name,
         },
       });
 
       expect(result).toEqual(
         expect.objectContaining({
-          email: registerUserInput.email,
-          name: registerUserInput.name,
+          email: mockRegisterUserInput.email,
+          name: mockRegisterUserInput.name,
         }),
       );
     });
 
     it('should throw ConflictException if email is already registered', async () => {
-      prismaService.user.findFirst = jest.fn().mockResolvedValue({
-        id: '123',
-        email: 'test@example.com',
-        name: 'Existing User',
-      });
+      prismaService.user.findFirst = jest.fn().mockResolvedValue(mockUser);
 
-      await expect(
-        authService.register({
-          email: 'test@example.com',
-          password: 'Test1234!',
-          name: 'Test User',
-        }),
-      ).rejects.toThrow(ConflictException);
+      await expect(authService.register(mockRegisterUserInput)).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('should throw InternalServerErrorException on unexpected error', async () => {
@@ -129,33 +108,14 @@ describe('AuthService', () => {
         .fn()
         .mockRejectedValue(new Error('Unexpected Error'));
 
-      await expect(
-        authService.register({
-          email: 'test@example.com',
-          password: 'Test1234!',
-          name: 'Test User',
-        }),
-      ).rejects.toThrow(InternalServerErrorException);
+      await expect(authService.register(mockRegisterUserInput)).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 
   describe('login', () => {
     it('should return a valid token', async () => {
-      const mockUser: UserModel = {
-        id: '123',
-        email: 'test@example.com',
-        password: 'hashedPassword',
-        name: 'Test User',
-        role: Role.CLIENT,
-        resetToken: null,
-        resetTokenExpiry: null,
-        stripeCustomerId: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      const mockToken = 'valid-token';
-
       jwtService.sign = jest.fn().mockReturnValue(mockToken);
 
       const result = await authService.login(mockUser);
@@ -170,48 +130,29 @@ describe('AuthService', () => {
 
   describe('validateUser', () => {
     it('should validate a user with correct credentials', async () => {
-      prismaService.user.findFirst = jest.fn().mockResolvedValue({
-        email: 'test@example.com',
-        password: 'hashedPassword',
-      });
+      prismaService.user.findFirst = jest.fn().mockResolvedValue(mockUser);
       (comparePassword as jest.Mock).mockResolvedValue(true);
 
-      const result = await authService.validateUser({
-        email: 'test@example.com',
-        password: 'Test1234!',
-      });
+      const result = await authService.validateUser(mockLoginUserInput);
 
-      expect(result).toEqual(
-        expect.objectContaining({
-          email: 'test@example.com',
-          password: 'hashedPassword',
-        }),
-      );
+      expect(result).toEqual(expect.objectContaining(mockUser));
     });
 
     it('should throw UnauthorizedException if email is incorrect', async () => {
       prismaService.user.findFirst = jest.fn().mockResolvedValue(null);
 
       await expect(
-        authService.validateUser({
-          email: 'wrong@example.com',
-          password: 'Test1234!',
-        }),
+        authService.validateUser(mockLoginUserWrongInput),
       ).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw UnauthorizedException if password is incorrect', async () => {
-      prismaService.user.findFirst = jest.fn().mockResolvedValue({
-        email: 'test@example.com',
-        password: 'hashedPassword',
-      });
+      prismaService.user.findFirst = jest.fn().mockResolvedValue(mockUser);
+
       (comparePassword as jest.Mock).mockResolvedValue(false);
 
       await expect(
-        authService.validateUser({
-          email: 'test@example.com',
-          password: 'WrongPassword!',
-        }),
+        authService.validateUser(mockLoginUserWrongInput),
       ).rejects.toThrow(UnauthorizedException);
     });
   });

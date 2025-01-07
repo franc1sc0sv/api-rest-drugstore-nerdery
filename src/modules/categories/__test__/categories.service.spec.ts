@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from 'nestjs-prisma';
-import { mockPrismaService } from '../../../__mocks__/prisma.service.mocks';
+import { mockPrismaService } from '../../../__mocks__/dependecies/prisma.service.mocks';
 import { CategoriesService } from '../categories.service';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { CreateCategoryInput } from '../dtos/request/create-category.input';
