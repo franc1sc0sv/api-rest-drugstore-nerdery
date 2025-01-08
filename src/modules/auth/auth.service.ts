@@ -78,6 +78,10 @@ export class AuthService {
   }
 
   async logout(userId: string, token: string): Promise<boolean> {
+    if (!token) {
+      throw new Error('Token de autorización no proporcionado');
+    }
+
     await this.prismaService.revokedToken.create({
       data: { userId, token },
     });

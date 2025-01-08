@@ -10,10 +10,9 @@ import { UploadProductImageInput } from './dtos/request/upload-product-images.in
 import { UpdateProductInput } from './dtos/request/update-products.input';
 import { UpdateProductStatusInput } from './dtos/request/update-product-status.input';
 import { GetProductsInput } from './dtos/request/get-products.input';
-import { ItemConnectionDto } from './dtos/pagination/item-connection.dto';
-import { ItemEdgeDto } from './dtos/pagination/item-edge.dto';
-import { PageInfoDto } from './dtos/pagination/page-info.dto';
+
 import { ProductModel } from 'src/common/models/product.model';
+import { GetProductsResponse } from './dtos/response/get-products.response';
 
 const CLOUDINATY_IMAGES_FOLDER = 'product-images';
 
@@ -26,68 +25,39 @@ export class ProductsService {
 
   async getProducts(
     getProductsInput: GetProductsInput,
-  ): Promise<ItemConnectionDto> {
-    const { first, after, before, categoryId } = getProductsInput;
+  ): Promise<GetProductsResponse> {
+    const { page, pageSize, categoryId } = getProductsInput;
 
-    let cursorCondition: any = null;
-    let sortOrder: 'asc' | 'desc' = 'asc';
-
-    if (after) {
-      cursorCondition = { createdAt: { gt: new Date(after) } };
-    } else if (before) {
-      cursorCondition = { createdAt: { lt: new Date(before) } };
-      sortOrder = 'desc';
-    }
+    const currentPage = Math.max(1, page || 1);
+    const limit = Math.max(1, pageSize || 10);
+    const skip = (currentPage - 1) * limit;
 
     const products = await this.prismaService.product.findMany({
       where: {
-        ...cursorCondition,
         ...(categoryId ? { categoryId } : {}),
       },
-      take: first,
-      orderBy: { createdAt: sortOrder },
+      take: limit,
+      skip: skip,
+      orderBy: { createdAt: 'asc' },
       include: {
         category: true,
         images: true,
       },
     });
 
-    const normalizedProducts =
-      sortOrder === 'desc' ? products.reverse() : products;
+    const totalItems = await this.prismaService.product.count({
+      where: {
+        ...(categoryId ? { categoryId } : {}),
+      },
+    });
 
-    const hasNextPage = Boolean(
-      await this.prismaService.product.findFirst({
-        where: {
-          ...(categoryId ? { categoryId } : {}),
-          createdAt: {
-            gt: normalizedProducts[normalizedProducts.length - 1]?.createdAt,
-          },
-        },
-      }),
-    );
+    const totalPages = Math.ceil(totalItems / limit);
 
-    const hasPreviousPage = Boolean(
-      await this.prismaService.product.findFirst({
-        where: {
-          ...(categoryId ? { categoryId } : {}),
-          createdAt: { lt: normalizedProducts[0]?.createdAt },
-        },
-      }),
-    );
-
-    const edges: ItemEdgeDto[] = normalizedProducts.map((product) => ({
-      node: { ...product },
-      cursor: product.createdAt.toISOString(),
-    }));
-
-    const pageInfo: PageInfoDto = {
-      hasNextPage,
-      hasPreviousPage,
-      startCursor: edges.length > 0 ? edges[0].cursor : null,
-      endCursor: edges.length > 0 ? edges[edges.length - 1].cursor : null,
+    return {
+      data: products,
+      totalPages,
+      currentPage,
     };
-
-    return { edges, pageInfo };
   }
 
   async createProduct(

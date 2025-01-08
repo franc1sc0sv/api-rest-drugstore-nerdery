@@ -4,51 +4,11 @@ import { ProductsService } from '../products.service';
 import { ImagesService } from '../../images/images.service';
 import { NotFoundException } from '@nestjs/common';
 import { mockPrismaService } from '../../../__mocks__/dependecies/prisma.service.mocks';
-
-const mockProducts = [
-  {
-    id: 'product-1',
-    name: 'Product 1',
-    description: 'Description for product 1',
-    price: 100.0,
-    stock: 50,
-    isDisabled: false,
-    lowStockNotified: false,
-    categoryId: 'category-1',
-    category: null,
-    images: [],
-    createdAt: new Date('2023-01-01T00:00:00.000Z'),
-    updatedAt: new Date('2023-01-02T00:00:00.000Z'),
-  },
-  {
-    id: 'product-2',
-    name: 'Product 2',
-    description: 'Description for product 2',
-    price: 200.0,
-    stock: 30,
-    isDisabled: false,
-    lowStockNotified: false,
-    categoryId: 'category-2',
-    category: null,
-    images: [],
-    createdAt: new Date('2023-01-02T00:00:00.000Z'),
-    updatedAt: new Date('2023-01-03T00:00:00.000Z'),
-  },
-  {
-    id: 'product-3',
-    name: 'Test Product 3',
-    description: 'Description for product 3',
-    price: 300.0,
-    stock: 20,
-    isDisabled: true,
-    lowStockNotified: true,
-    categoryId: 'category-3',
-    category: null,
-    images: [],
-    createdAt: new Date('2023-01-03T00:00:00.000Z'),
-    updatedAt: new Date('2023-01-04T00:00:00.000Z'),
-  },
-];
+import {
+  mockPage,
+  mockPageSize,
+  mockProducts,
+} from '../../../__mocks__/data/product.mocks';
 
 const mockImageService = {
   uploadImage: jest.fn(),
@@ -79,90 +39,127 @@ describe('ProductsService', () => {
   });
 
   describe('getProducts', () => {
-    it('should retrieve all products without filters', async () => {
-      mockPrismaService.product.findMany.mockResolvedValueOnce(mockProducts);
+    it('should retrieve products for the first page', async () => {
+      const paginatedProducts = mockProducts.slice(0, mockPageSize);
 
-      const result = await productsService.getProducts({ first: 3 });
-
-      expect(result.edges).toHaveLength(3);
-      expect(result.pageInfo.hasNextPage).toBe(false);
-      expect(result.pageInfo.hasPreviousPage).toBe(false);
-    });
-
-    it('should retrieve products after a specific cursor', async () => {
-      mockPrismaService.product.findMany.mockResolvedValueOnce([
-        mockProducts[1],
-        mockProducts[2],
-      ]);
+      mockPrismaService.product.findMany.mockResolvedValueOnce(
+        paginatedProducts,
+      );
+      mockPrismaService.product.count.mockResolvedValueOnce(
+        mockProducts.length,
+      );
 
       const result = await productsService.getProducts({
-        first: 2,
-        after: '2023-01-01T00:00:00.000Z',
+        page: mockPage,
+        pageSize: mockPageSize,
       });
 
-      expect(result.edges).toHaveLength(2);
-      expect(result.edges[0].node.name).toBe('Product 2');
-      expect(result.pageInfo.hasNextPage).toBe(false);
+      expect(result.data).toHaveLength(mockPageSize);
+      expect(result.currentPage).toBe(mockPage);
+      expect(result.totalPages).toBe(
+        Math.ceil(mockProducts.length / mockPageSize),
+      );
     });
 
-    it('should retrieve products before a specific cursor', async () => {
-      mockPrismaService.product.findMany.mockResolvedValueOnce([
-        mockProducts[0],
-      ]);
+    it('should retrieve products for a specific page', async () => {
+      const startIndex = (mockPage - 1) * mockPageSize;
+      const paginatedProducts = mockProducts.slice(
+        startIndex,
+        startIndex + mockPageSize,
+      );
+
+      mockPrismaService.product.findMany.mockResolvedValueOnce(
+        paginatedProducts,
+      );
+      mockPrismaService.product.count.mockResolvedValueOnce(
+        mockProducts.length,
+      );
 
       const result = await productsService.getProducts({
-        first: 1,
-        before: '2023-01-02T00:00:00.000Z',
+        page: mockPage,
+        pageSize: mockPageSize,
       });
 
-      expect(result.edges).toHaveLength(1);
-      expect(result.edges[0].node.name).toBe('Product 1');
-      expect(result.pageInfo.hasPreviousPage).toBe(false);
+      expect(result.data).toHaveLength(mockPageSize);
+      expect(result.currentPage).toBe(mockPage);
+      expect(result.totalPages).toBe(
+        Math.ceil(mockProducts.length / mockPageSize),
+      );
     });
 
     it('should retrieve products filtered by category', async () => {
-      mockPrismaService.product.findMany.mockResolvedValueOnce([
-        mockProducts[0],
-        mockProducts[2],
-      ]);
-
-      const result = await productsService.getProducts({
-        first: 2,
-        categoryId: 'category-1',
-      });
-
-      expect(result.edges).toHaveLength(2);
-      expect(result.edges[0].node.categoryId).toBe('category-1');
-    });
-
-    it('should handle pagination with hasNextPage and hasPreviousPage', async () => {
-      mockPrismaService.product.findMany.mockResolvedValueOnce([
-        mockProducts[0],
-        mockProducts[1],
-      ]);
-      mockPrismaService.product.findFirst.mockResolvedValueOnce(
-        mockProducts[2],
+      const mockCategoryId = mockProducts[0].categoryId;
+      const filteredProducts = mockProducts.filter(
+        (p) => p.categoryId === mockCategoryId,
       );
-      mockPrismaService.product.findFirst.mockResolvedValueOnce(
-        mockProducts[0],
+
+      mockPrismaService.product.findMany.mockResolvedValueOnce(
+        filteredProducts.slice(0, mockPageSize),
+      );
+      mockPrismaService.product.count.mockResolvedValueOnce(
+        filteredProducts.length,
       );
 
       const result = await productsService.getProducts({
-        first: 2,
+        page: mockPage,
+        pageSize: mockPageSize,
+        categoryId: mockCategoryId,
       });
 
-      expect(result.pageInfo.hasNextPage).toBe(true);
-      expect(result.pageInfo.hasPreviousPage).toBe(true);
+      expect(result.data).toHaveLength(
+        Math.min(mockPageSize, filteredProducts.length),
+      );
+      expect(result.currentPage).toBe(mockPage);
+      expect(result.totalPages).toBe(
+        Math.ceil(filteredProducts.length / mockPageSize),
+      );
+      expect(result.data.every((p) => p.categoryId === mockCategoryId)).toBe(
+        true,
+      );
     });
 
-    it('should return empty edges when no products are found', async () => {
+    it('should return an empty result for a page with no products', async () => {
+      const totalPages = Math.ceil(mockProducts.length / mockPageSize);
+
       mockPrismaService.product.findMany.mockResolvedValueOnce([]);
+      mockPrismaService.product.count.mockResolvedValueOnce(
+        mockProducts.length,
+      );
 
-      const result = await productsService.getProducts({ first: 2 });
+      const result = await productsService.getProducts({
+        page: mockPage,
+        pageSize: mockPageSize,
+      });
 
-      expect(result.edges).toHaveLength(0);
-      expect(result.pageInfo.hasNextPage).toBe(false);
-      expect(result.pageInfo.hasPreviousPage).toBe(false);
+      expect(result.data).toHaveLength(0);
+      expect(result.currentPage).toBe(mockPage);
+      expect(result.totalPages).toBe(totalPages);
+    });
+
+    it('should handle dynamic page and pageSize values', async () => {
+      const startIndex = (mockPage - 1) * mockPageSize;
+      const paginatedProducts = mockProducts.slice(
+        startIndex,
+        startIndex + mockPageSize,
+      );
+
+      mockPrismaService.product.findMany.mockResolvedValueOnce(
+        paginatedProducts,
+      );
+      mockPrismaService.product.count.mockResolvedValueOnce(
+        mockProducts.length,
+      );
+
+      const result = await productsService.getProducts({
+        page: mockPage,
+        pageSize: mockPageSize,
+      });
+
+      expect(result.data).toHaveLength(paginatedProducts.length);
+      expect(result.currentPage).toBe(mockPage);
+      expect(result.totalPages).toBe(
+        Math.ceil(mockProducts.length / mockPageSize),
+      );
     });
   });
 

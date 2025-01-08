@@ -9,19 +9,19 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { UseGuards } from '@nestjs/common';
 import { UpdateProductStatusInput } from './dtos/request/update-product-status.input';
 import { UpdateProductInput } from './dtos/request/update-products.input';
-import { ItemConnectionDto } from './dtos/pagination/item-connection.dto';
 import { GetProductsInput } from './dtos/request/get-products.input';
 import { ProductModel } from 'src/common/models/product.model';
 import { UnifiedAuthGuard } from 'src/common/guards/unified-auth.guard';
+import { GetProductsResponse } from './dtos/response/get-products.response';
 
 @Resolver()
 export class ProductsResolver {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Query(() => ItemConnectionDto)
+  @Query(() => GetProductsResponse)
   async getProducts(
     @Args('getProductsInput') getProductsInput: GetProductsInput,
-  ): Promise<ItemConnectionDto> {
+  ): Promise<GetProductsResponse> {
     return this.productsService.getProducts(getProductsInput);
   }
 

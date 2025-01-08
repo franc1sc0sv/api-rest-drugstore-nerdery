@@ -7,6 +7,7 @@ import { PrismaService } from 'nestjs-prisma';
 import { CreateCategoryInput } from './dtos/request/create-category.input';
 import { UpdateCategoryInput } from './dtos/request/update-category.input';
 import { CategoryModel } from 'src/common/models/category.model';
+import { IdDto } from 'src/common/dtos/id.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -24,9 +25,10 @@ export class CategoriesService {
     });
   }
 
-  async getCategoryByID(id: string): Promise<CategoryModel> {
+  async getCategoryByID(categoryIdDto: IdDto): Promise<CategoryModel> {
+    const { id: categoryId } = categoryIdDto;
     const category = await this.prismaService.category.findFirst({
-      where: { id },
+      where: { id: categoryId },
       include: {
         subCategories: true,
         parent: true,
@@ -55,18 +57,22 @@ export class CategoriesService {
   }
 
   async updateCategory(
-    id: string,
+    categoryIdDto: IdDto,
     data: UpdateCategoryInput,
   ): Promise<CategoryModel> {
+    const { id: categoryId } = categoryIdDto;
+
     return this.prismaService.category.update({
-      where: { id },
+      where: { id: categoryId },
       data,
     });
   }
 
-  async removeCategory(id: string): Promise<boolean> {
+  async removeCategory(categoryIdDto: IdDto): Promise<boolean> {
+    const { id: categoryId } = categoryIdDto;
+
     await this.prismaService.category.delete({
-      where: { id },
+      where: { id: categoryId },
     });
     return true;
   }

@@ -5,18 +5,14 @@ import { IsOptional, IsString, IsInt, Min } from 'class-validator';
 export class GetProductsInput {
   @Field(() => Int, { nullable: true, defaultValue: 10 })
   @IsInt()
-  @Min(1, { message: 'El valor mínimo para "first" es 1' })
-  first: number = 10;
+  @Min(1, { message: 'El valor mínimo para "pageSize" es 1' })
+  pageSize: number = 10;
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  @IsString({ message: 'El cursor "after" debe ser un string válido' })
-  after?: string;
-
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  @IsString({ message: 'El cursor "before" debe ser un string válido' })
-  before?: string;
+  @IsInt()
+  @Min(1, { message: 'El valor mínimo para "page" es 1' })
+  page: number;
 
   @Field(() => String, { nullable: true })
   @IsOptional()

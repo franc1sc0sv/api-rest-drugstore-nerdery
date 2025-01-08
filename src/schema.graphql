@@ -8,6 +8,7 @@ input AddItemToCartInput {
 }
 
 type CartItemModel {
+  cartId: String!
   id: String!
   product: ProductModel!
   productId: String!
@@ -92,7 +93,7 @@ type Mutation {
   createCategory(createCategoryInput: CreateCategoryInput!): CategoryModel!
   createOrder: createOrderResponseDto!
   createProduct(createProductInput: CreateProductInput!): ProductModel!
-  deleteCategory(id: String!): Boolean!
+  deleteCategory(categoryIdDto: IdDto!): Boolean!
   deleteLike(productIdDto: IdDto!): Boolean!
   deleteProduct(productIdDto: IdDto!): Boolean!
   generateNewPaymentIntent(orderIdDto: IdDto!): PaymentIntentModel!
@@ -100,7 +101,7 @@ type Mutation {
   removeCartItem(cartItemIdDto: IdDto!): Boolean!
   removeImageFromProduct(imageUrlDto: IdDto!, productIdDto: IdDto!): Boolean!
   updateCategory(
-    id: String!
+    categoryIdDto: IdDto!
     updateCategoryInput: UpdateCategoryInput!
   ): CategoryModel!
   updateProductDetails(
@@ -187,7 +188,7 @@ type ProductModel {
 type Query {
   getCart: CartModel!
   getCategories: [CategoryModel!]!
-  getCategory(id: String!): CategoryModel!
+  getCategory(categoryIdDto: IdDto!): CategoryModel!
   getOrderById(orderIdDto: IdDto!): OrderModel!
   getOrders: [OrderModel!]!
   getProductById(productIdDto: IdDto!): ProductModel!

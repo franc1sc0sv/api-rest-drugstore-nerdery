@@ -52,10 +52,6 @@ export class AuthController {
   ): Promise<boolean> {
     const token = req.headers.authorization?.split(' ')[1];
 
-    if (!token) {
-      throw new Error('Token de autorización no proporcionado');
-    }
-
     await this.authService.logout(user.id, token);
     return true;
   }

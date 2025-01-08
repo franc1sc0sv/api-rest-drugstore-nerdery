@@ -1,7 +1,9 @@
 import { faker } from '@faker-js/faker';
-import { ProductModel } from 'src/common/models/product.model';
 
-export const generateProduct = (): ProductModel => ({
+export const mockPage = 1;
+export const mockPageSize = faker.number.int({ min: 1, max: 20 });
+
+export const generateProduct = () => ({
   id: faker.string.uuid(),
   name: faker.commerce.productName(),
   description: faker.commerce.productDescription(),
@@ -15,3 +17,5 @@ export const generateProduct = (): ProductModel => ({
   createdAt: faker.date.past(),
   updatedAt: faker.date.recent(),
 });
+
+export const mockProducts = Array.from({ length: 50 }, generateProduct);

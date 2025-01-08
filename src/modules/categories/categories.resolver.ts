@@ -8,6 +8,7 @@ import { Role } from '@prisma/client';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { CategoryModel } from 'src/common/models/category.model';
 import { UnifiedAuthGuard } from 'src/common/guards/unified-auth.guard';
+import { IdDto } from 'src/common/dtos/id.dto';
 
 @Resolver()
 export class CategoriesResolver {
@@ -19,8 +20,10 @@ export class CategoriesResolver {
   }
 
   @Query(() => CategoryModel)
-  async getCategory(@Args('id') id: string): Promise<CategoryModel> {
-    return this.categoryService.getCategoryByID(id);
+  async getCategory(
+    @Args('categoryIdDto') categoryIdDto: IdDto,
+  ): Promise<CategoryModel> {
+    return this.categoryService.getCategoryByID(categoryIdDto);
   }
 
   @Mutation(() => CategoryModel)
@@ -36,16 +39,21 @@ export class CategoriesResolver {
   @UseGuards(UnifiedAuthGuard, RolesGuard)
   @Roles(Role.MANAGER)
   async updateCategory(
-    @Args('id') id: string,
+    @Args('categoryIdDto') categoryIdDto: IdDto,
     @Args('updateCategoryInput') updateCategoryInput: UpdateCategoryInput,
   ): Promise<CategoryModel> {
-    return this.categoryService.updateCategory(id, updateCategoryInput);
+    return this.categoryService.updateCategory(
+      categoryIdDto,
+      updateCategoryInput,
+    );
   }
 
   @Mutation(() => Boolean)
   @UseGuards(UnifiedAuthGuard, RolesGuard)
   @Roles(Role.MANAGER)
-  async deleteCategory(@Args('id') id: string): Promise<boolean> {
-    return this.categoryService.removeCategory(id);
+  async deleteCategory(
+    @Args('categoryIdDto') categoryIdDto: IdDto,
+  ): Promise<boolean> {
+    return this.categoryService.removeCategory(categoryIdDto);
   }
 }
