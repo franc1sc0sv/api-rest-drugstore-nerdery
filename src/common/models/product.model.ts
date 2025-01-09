@@ -18,6 +18,9 @@ export class ProductModel implements Partial<Product> {
   price: number;
 
   @Field()
+  categoryId: string;
+
+  @Field()
   stock?: number;
 
   @Field()
@@ -25,9 +28,6 @@ export class ProductModel implements Partial<Product> {
 
   @Field()
   lowStockNotified?: boolean;
-
-  @Field()
-  categoryId: string;
 
   @Field(() => CategoryModel, { nullable: true })
   category?: CategoryModel;

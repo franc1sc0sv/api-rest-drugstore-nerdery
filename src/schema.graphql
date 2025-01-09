@@ -53,24 +53,19 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 input GetProductsInput {
-  after: String
-  before: String
   categoryId: String
-  first: Int = 10
+  page: Int
+  pageSize: Int = 10
+}
+
+type GetProductsResponse {
+  currentPage: Float!
+  data: [ProductModel!]!
+  totalPages: Float!
 }
 
 input IdDto {
   id: String!
-}
-
-type ItemConnectionDto {
-  edges: [ItemEdgeDto!]!
-  pageInfo: PageInfoDto!
-}
-
-type ItemEdgeDto {
-  cursor: String!
-  node: ProductModel!
 }
 
 type LikeModel {
@@ -82,16 +77,13 @@ type LikeModel {
 }
 
 type Mutation {
-  addImagesToProduct(
-    productIdDto: IdDto!
-    uploadProductImageInput: [UploadProductImageInput!]!
-  ): ProductModel!
+  addImagesToProduct(productIdDto: IdDto!, uploadProductImageInput: [UploadProductImageInput!]!): ProductModel!
   addItemToCart(addItemToCartInput: AddItemToCartInput!): CartModel!
-  calculateTotal: TotalCart!
+  calculateTotal: TotalCartResponse!
   cancelOrder(orderIdDto: IdDto!): OrderModel!
   cancelPayment(paymentIntentIdDto: IdDto!): Boolean!
   createCategory(createCategoryInput: CreateCategoryInput!): CategoryModel!
-  createOrder: createOrderResponseDto!
+  createOrder: createOrderResponse!
   createProduct(createProductInput: CreateProductInput!): ProductModel!
   deleteCategory(categoryIdDto: IdDto!): Boolean!
   deleteLike(productIdDto: IdDto!): Boolean!
@@ -100,18 +92,9 @@ type Mutation {
   likeProduct(productIdDto: IdDto!): LikeModel!
   removeCartItem(cartItemIdDto: IdDto!): Boolean!
   removeImageFromProduct(imageUrlDto: IdDto!, productIdDto: IdDto!): Boolean!
-  updateCategory(
-    categoryIdDto: IdDto!
-    updateCategoryInput: UpdateCategoryInput!
-  ): CategoryModel!
-  updateProductDetails(
-    productIdDto: IdDto!
-    updateProductInput: UpdateProductInput!
-  ): ProductModel!
-  updateProductStatus(
-    productIdDto: IdDto!
-    updateProductStatusdInput: UpdateProductStatusInput!
-  ): ProductModel!
+  updateCategory(categoryIdDto: IdDto!, updateCategoryInput: UpdateCategoryInput!): CategoryModel!
+  updateProductDetails(productIdDto: IdDto!, updateProductInput: UpdateProductInput!): ProductModel!
+  updateProductStatus(productIdDto: IdDto!, updateProductStatusdInput: UpdateProductStatusInput!): ProductModel!
 }
 
 type OrderItemModel {
@@ -133,21 +116,12 @@ type OrderModel {
   userId: String!
 }
 
-"""
-OrderStatus
-"""
+"""OrderStatus"""
 enum OrderStatus {
   CANCELED
   COMPLETED
   FAILED
   PENDING
-}
-
-type PageInfoDto {
-  endCursor: String
-  hasNextPage: Boolean!
-  hasPreviousPage: Boolean!
-  startCursor: String
 }
 
 type PaymentIntentModel {
@@ -192,11 +166,11 @@ type Query {
   getOrderById(orderIdDto: IdDto!): OrderModel!
   getOrders: [OrderModel!]!
   getProductById(productIdDto: IdDto!): ProductModel!
-  getProducts(getProductsInput: GetProductsInput!): ItemConnectionDto!
+  getProducts(getProductsInput: GetProductsInput!): GetProductsResponse!
   getUserLikes: [LikeModel!]!
 }
 
-type TotalCart {
+type TotalCartResponse {
   id: String!
   total: Float!
 }
@@ -223,7 +197,7 @@ input UploadProductImageInput {
   fileBuffer: String!
 }
 
-type createOrderResponseDto {
+type createOrderResponse {
   client_secret: String!
   order: OrderModel!
 }

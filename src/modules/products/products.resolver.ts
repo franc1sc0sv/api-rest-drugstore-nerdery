@@ -1,4 +1,11 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { ProductsService } from './products.service';
 import { CreateProductInput } from './dtos/request/create-products.input';
 import { IdDto } from 'src/common/dtos/id.dto';
@@ -13,10 +20,18 @@ import { GetProductsInput } from './dtos/request/get-products.input';
 import { ProductModel } from 'src/common/models/product.model';
 import { UnifiedAuthGuard } from 'src/common/guards/unified-auth.guard';
 import { GetProductsResponse } from './dtos/response/get-products.response';
+import { CategoryModel } from 'src/common/models/category.model';
+import { CategoryLoader } from '../loaders/category/category-loader/category.loader';
+import { ProductImageLoader } from '../loaders/product/product-image-loader/product-image.loader';
+import { ProductImageModel } from 'src/common/models/product-image.model';
 
-@Resolver()
+@Resolver(() => ProductModel)
 export class ProductsResolver {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly categoryLoader: CategoryLoader,
+    private readonly productImageLoader: ProductImageLoader,
+  ) {}
 
   @Query(() => GetProductsResponse)
   async getProducts(
@@ -100,5 +115,22 @@ export class ProductsResolver {
       productIdDto,
       imageIdDto,
     );
+  }
+
+  @ResolveField(() => CategoryModel, { nullable: true })
+  async category(
+    @Parent() product: ProductModel,
+  ): Promise<CategoryModel | null> {
+    const { categoryId } = product;
+    if (!categoryId) return null;
+    return this.categoryLoader.batchCategories.load(categoryId);
+  }
+
+  @ResolveField(() => [ProductImageModel], { nullable: true })
+  async images(
+    @Parent() product: ProductModel,
+  ): Promise<ProductImageModel[] | null> {
+    const { id: productId } = product;
+    return this.productImageLoader.batchProductImages.load(productId);
   }
 }

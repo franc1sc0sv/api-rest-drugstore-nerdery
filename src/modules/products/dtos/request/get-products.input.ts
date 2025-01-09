@@ -8,7 +8,7 @@ export class GetProductsInput {
   @Min(1, { message: 'El valor mínimo para "pageSize" es 1' })
   pageSize: number = 10;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Int, { nullable: true })
   @IsOptional()
   @IsInt()
   @Min(1, { message: 'El valor mínimo para "page" es 1' })

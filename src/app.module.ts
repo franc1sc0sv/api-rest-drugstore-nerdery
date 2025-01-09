@@ -27,6 +27,7 @@ import { StripeModule } from './modules/orders/stripe.module';
 import { CustomThrottlerGuard } from './common/guards/custom-throttler.guard';
 import * as bodyParser from 'body-parser';
 import { seed } from './seeds/seed-users.seed';
+import { LoadersModule } from './modules/loaders/loaders.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { seed } from './seeds/seed-users.seed';
     MailsModule,
     OrdersModule,
     StripeModule,
+    LoadersModule,
   ],
   providers: [
     {

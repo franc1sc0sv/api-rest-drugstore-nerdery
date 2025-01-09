@@ -39,10 +39,6 @@ export class ProductsService {
       take: limit,
       skip: skip,
       orderBy: { createdAt: 'asc' },
-      include: {
-        category: true,
-        images: true,
-      },
     });
 
     const totalItems = await this.prismaService.product.count({
@@ -94,9 +90,6 @@ export class ProductsService {
             cloudinaryPublicId: image.publicId,
           })),
         },
-      },
-      include: {
-        images: true,
       },
     });
   }
@@ -201,7 +194,6 @@ export class ProductsService {
     const { id: productId } = productIdDto;
     const product = await this.prismaService.product.findFirst({
       where: { id: productId },
-      include: { images: true },
     });
 
     if (!product) {
@@ -221,7 +213,6 @@ export class ProductsService {
     return this.prismaService.product.update({
       where: { id: productId },
       data: updateProductInput,
-      include: { images: true },
     });
   }
 
@@ -236,7 +227,6 @@ export class ProductsService {
     return this.prismaService.product.update({
       where: { id: productId },
       data: { isDisabled },
-      include: { images: true },
     });
   }
 }

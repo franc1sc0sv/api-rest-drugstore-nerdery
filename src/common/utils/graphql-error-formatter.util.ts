@@ -2,11 +2,12 @@ import { GraphQLError, GraphQLFormattedError } from 'graphql';
 
 export const formatGraphQLError = (
   formatedError: GraphQLError,
+  error: any,
 ): GraphQLFormattedError => {
   const path = formatedError.path;
   const timestamp = new Date().toISOString();
   const originalError = formatedError.extensions.originalError;
-
+  console.log(error);
   const errorMessage = {
     message:
       typeof originalError === 'string'

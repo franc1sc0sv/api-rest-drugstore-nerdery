@@ -3,7 +3,7 @@ import { ProductModel } from 'src/common/models/product.model';
 
 @ObjectType()
 export class GetProductsResponse {
-  @Field()
+  @Field(() => [ProductModel])
   data: ProductModel[];
   @Field()
   totalPages: number;
