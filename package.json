@@ -142,6 +142,7 @@
       "<rootDir>/.*\\.seed\\.ts$",
       "<rootDir>/.*\\.model\\.ts$",
       "<rootDir>/.*\\.enum\\.ts$",
+      "<rootDir>/.*\\.response\\.ts$",
       "<rootDir>/main.ts"
     ],
     "coverageDirectory": "../coverage",

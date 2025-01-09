@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ImagesService } from '../images/images.service';
 import { PrismaService } from 'nestjs-prisma';
 import { CreateProductInput } from './dtos/request/create-products.input';
-import { UploadImageResponseDto } from '../images/dtos/response/upload-image.response';
+import { UploadImageResponseResponse } from '../images/dtos/response/upload-image.response';
 
 import { IdDto } from 'src/common/dtos/id.dto';
 import { UploadProductImageInput } from './dtos/request/upload-product-images.input';
@@ -63,7 +63,7 @@ export class ProductsService {
   async createProduct(
     createProductInput: CreateProductInput,
   ): Promise<ProductModel> {
-    const uploadedImages: UploadImageResponseDto[] = [];
+    const uploadedImages: UploadImageResponseResponse[] = [];
     const { images } = createProductInput;
 
     const formattedImages = images?.map((image) => ({
@@ -114,7 +114,7 @@ export class ProductsService {
       throw new NotFoundException(`Product with ID ${productId} not found`);
     }
 
-    const uploadedImages: UploadImageResponseDto[] = [];
+    const uploadedImages: UploadImageResponseResponse[] = [];
 
     const formattedImages = uploadProductImageInput?.map((image) => ({
       fileBuffer: image.fileBuffer,

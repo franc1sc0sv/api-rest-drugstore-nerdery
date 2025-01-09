@@ -8,7 +8,7 @@ import { UpdateCategoryInput } from '../dtos/request/update-category.input';
 import {
   mockCategory,
   mockCategories,
-} from '../../../__mocks__/data/categories.mocks'; // Importa los mocks
+} from '../../../__mocks__/data/categories.mocks';
 
 describe('CategoriesService', () => {
   let categoriesService: CategoriesService;
@@ -46,7 +46,7 @@ describe('CategoriesService', () => {
       prismaService.category.findFirst = jest.fn().mockResolvedValue(null);
 
       await expect(
-        categoriesService.getCategoryByID(mockCategory.id),
+        categoriesService.getCategoryByID({ id: mockCategory.id }),
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -55,7 +55,9 @@ describe('CategoriesService', () => {
         .fn()
         .mockResolvedValue(mockCategory);
 
-      const result = await categoriesService.getCategoryByID(mockCategory.id);
+      const result = await categoriesService.getCategoryByID({
+        id: mockCategory.id,
+      });
       expect(result).toEqual(mockCategory);
     });
   });
@@ -103,7 +105,7 @@ describe('CategoriesService', () => {
       };
 
       const result = await categoriesService.updateCategory(
-        mockCategory.id,
+        { id: mockCategory.id },
         updateCategoryInput,
       );
       expect(result).toEqual(mockCategory);
@@ -120,7 +122,9 @@ describe('CategoriesService', () => {
         .fn()
         .mockResolvedValue({ id: mockCategory.id });
 
-      const result = await categoriesService.removeCategory(mockCategory.id);
+      const result = await categoriesService.removeCategory({
+        id: mockCategory.id,
+      });
       expect(result).toBe(true);
       expect(prismaService.category.delete).toHaveBeenCalledWith({
         where: { id: mockCategory.id },
