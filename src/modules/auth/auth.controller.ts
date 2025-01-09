@@ -4,7 +4,7 @@ import { LocalAuthGuard } from 'src/common/guards/local-auth.guard';
 import { UserModel } from 'src/common/models/user.model';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
-import { AuthResponseDto } from './dtos/response/auth-response.dto';
+import { AuthResponse } from './dtos/response/auth-response.response';
 import { RegisterUserInput } from './dtos/request/register-user.input';
 import { ForgetPasswordInput } from './dtos/request/forget-password.input';
 import { ResetPasswordInput } from './dtos/request/reset-password.input';
@@ -17,7 +17,7 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(LocalAuthGuard)
-  async login(@CurrentUser() user: UserModel): Promise<AuthResponseDto> {
+  async login(@CurrentUser() user: UserModel): Promise<AuthResponse> {
     return await this.authService.login(user);
   }
 

@@ -6,7 +6,7 @@ import { AddItemToCartInput } from './dtos/request/add-item-to-cart.input';
 import { UseGuards } from '@nestjs/common';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserModel } from 'src/common/models/user.model';
-import { TotalCart } from './dtos/response/total-cart.dto';
+import { TotalCartResponse } from './dtos/response/total-cart.response';
 import { UnifiedAuthGuard } from 'src/common/guards/unified-auth.guard';
 
 @Resolver()
@@ -37,9 +37,11 @@ export class CartsResolver {
     return await this.cartService.removeCartItem(cartItemIdDto, user);
   }
 
-  @Mutation(() => TotalCart)
+  @Mutation(() => TotalCartResponse)
   @UseGuards(UnifiedAuthGuard)
-  async calculateTotal(@CurrentUser() user: UserModel): Promise<TotalCart> {
+  async calculateTotal(
+    @CurrentUser() user: UserModel,
+  ): Promise<TotalCartResponse> {
     return await this.cartService.calculateTotal(user);
   }
 }

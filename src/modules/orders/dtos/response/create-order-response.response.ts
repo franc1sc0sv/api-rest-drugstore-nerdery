@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { OrderModel } from 'src/common/models/order.model';
 
 @ObjectType()
-export class createOrderResponseDto {
+export class createOrderResponse {
   @Field(() => OrderModel)
   order: OrderModel;
 

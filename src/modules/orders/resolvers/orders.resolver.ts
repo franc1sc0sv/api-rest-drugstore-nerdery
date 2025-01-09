@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 
 import { OrderModel } from 'src/common/models/order.model';
 import { UserModel } from 'src/common/models/user.model';
-import { createOrderResponseDto } from '../dtos/response/create-order-response.dto';
+import { createOrderResponse } from '../dtos/response/create-order-response.response';
 import { IdDto } from 'src/common/dtos/id.dto';
 import { UseGuards } from '@nestjs/common';
 import { OrdersService } from '../services/orders.service';
@@ -14,11 +14,11 @@ import { UnifiedAuthGuard } from 'src/common/guards/unified-auth.guard';
 export class OrdersResolver {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Mutation(() => createOrderResponseDto)
+  @Mutation(() => createOrderResponse)
   @UseGuards(UnifiedAuthGuard)
   async createOrder(
     @CurrentUser() user: UserModel,
-  ): Promise<createOrderResponseDto> {
+  ): Promise<createOrderResponse> {
     return await this.ordersService.createOrder(user);
   }
 

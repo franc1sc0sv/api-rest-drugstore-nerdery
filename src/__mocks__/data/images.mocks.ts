@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { UploadApiResponse } from 'cloudinary';
 import { DeleteImageRequestDto } from 'src/modules/images/dtos/request/delete-image.input';
 import { UploadImageInput } from 'src/modules/images/dtos/request/upload-image.input';
-import { UploadImageResponseDto } from 'src/modules/images/dtos/response/upload-image.dto';
+import { UploadImageResponseDto } from 'src/modules/images/dtos/response/upload-image.response';
 
 export const mockUploadImageInput: UploadImageInput = {
   fileBuffer: faker.image.dataUri(),

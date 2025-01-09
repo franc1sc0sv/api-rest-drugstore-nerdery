@@ -4,7 +4,7 @@ import { AddItemToCartInput } from './dtos/request/add-item-to-cart.input';
 import { PrismaService } from 'nestjs-prisma';
 import { IdDto } from 'src/common/dtos/id.dto';
 import { UserModel } from 'src/common/models/user.model';
-import { TotalCart } from './dtos/response/total-cart.dto';
+import { TotalCartResponse } from './dtos/response/total-cart.response';
 
 @Injectable()
 export class CartsService {
@@ -99,7 +99,7 @@ export class CartsService {
     return true;
   }
 
-  async calculateTotal(user: UserModel): Promise<TotalCart> {
+  async calculateTotal(user: UserModel): Promise<TotalCartResponse> {
     const cart = await this.findCartByUserId(user);
 
     if (!cart.cartItems || cart.cartItems.length === 0) {

@@ -2,9 +2,9 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as handlebars from 'handlebars';
 import * as fs from 'fs';
 
-import { SendEmailDto } from './dto/send-email.dto';
-import { SendEmailOptionalDto } from './dto/send-email-optional.dto';
-import { SendEmailResetPasswordDto } from './dto/send-email-reset.dto';
+import { SendEmailDto } from './dto/request/send-email.dto';
+import { SendEmailOptionalDto } from './dto/request/send-email-optional.dto';
+import { SendEmailResetPasswordDto } from './dto/request/send-email-reset.dto';
 import * as path from 'path';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';

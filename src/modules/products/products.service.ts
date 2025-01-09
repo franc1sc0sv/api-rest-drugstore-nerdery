@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ImagesService } from '../images/images.service';
 import { PrismaService } from 'nestjs-prisma';
 import { CreateProductInput } from './dtos/request/create-products.input';
-import { UploadImageResponseDto } from '../images/dtos/response/upload-image.dto';
+import { UploadImageResponseDto } from '../images/dtos/response/upload-image.response';
 
 import { IdDto } from 'src/common/dtos/id.dto';
 import { UploadProductImageInput } from './dtos/request/upload-product-images.input';

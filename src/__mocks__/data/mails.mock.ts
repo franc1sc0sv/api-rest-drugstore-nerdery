@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { SendEmailOptionalDto } from 'src/modules/mails/dto/send-email-optional.dto';
-import { SendEmailResetPasswordDto } from 'src/modules/mails/dto/send-email-reset.dto';
-import { SendEmailDto } from 'src/modules/mails/dto/send-email.dto';
+import { SendEmailOptionalDto } from 'src/modules/mails/dto/request/send-email-optional.dto';
+import { SendEmailResetPasswordDto } from 'src/modules/mails/dto/request/send-email-reset.dto';
+import { SendEmailDto } from 'src/modules/mails/dto/request/send-email.dto';
 
 const generateSendEmailResetPassword = (): SendEmailResetPasswordDto => ({
   to: faker.internet.email(),

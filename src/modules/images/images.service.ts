@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { UploadImageInput } from './dtos/request/upload-image.input';
-import { UploadImageResponseDto } from './dtos/response/upload-image.dto';
+import { UploadImageResponseResponse } from './dtos/response/upload-image.response';
 import { DeleteImageRequestDto } from './dtos/request/delete-image.input';
 import {
   v2 as cloudinary,
@@ -24,7 +24,7 @@ export class ImagesService {
 
   async uploadImage(
     uploadImageInput: UploadImageInput,
-  ): Promise<UploadImageResponseDto> {
+  ): Promise<UploadImageResponseResponse> {
     const { fileBuffer, folder } = uploadImageInput;
 
     try {

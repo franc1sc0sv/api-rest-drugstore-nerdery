@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class UploadImageResponseDto {
+export class UploadImageResponseResponse {
   @Field()
   publicId: string;
 

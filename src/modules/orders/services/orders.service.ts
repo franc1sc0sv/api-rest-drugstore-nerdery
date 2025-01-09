@@ -14,7 +14,7 @@ import { OrderStatus } from '@prisma/client';
 import { UserModel } from '../../../common/models/user.model';
 import { IdDto } from '../../../common/dtos/id.dto';
 import { CreatePaymentIntent } from '../dtos/request/create-payment-intent.dto';
-import { createOrderResponseDto } from '../dtos/response/create-order-response.dto';
+import { createOrderResponse } from '../dtos/response/create-order-response.response';
 import { PaymentIntentModel } from '../../../common/models/payment-intent.model';
 
 @Injectable()
@@ -25,7 +25,7 @@ export class OrdersService {
     private readonly stripeService: StripeService,
   ) {}
 
-  async createOrder(user: UserModel): Promise<createOrderResponseDto> {
+  async createOrder(user: UserModel): Promise<createOrderResponse> {
     const cart = await this.cartsService.findCartByUserId(user);
 
     if (!cart.cartItems || cart.cartItems.length === 0) {

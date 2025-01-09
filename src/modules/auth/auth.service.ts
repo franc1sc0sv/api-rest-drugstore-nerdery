@@ -9,7 +9,7 @@ import {
 import { PrismaService } from 'nestjs-prisma';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserInput } from './dtos/request/login-user.input';
-import { AuthResponseDto } from './dtos/response/auth-response.dto';
+import { AuthResponse } from './dtos/response/auth-response.response';
 
 import { RegisterUserInput } from './dtos/request/register-user.input';
 import { UserModel } from 'src/common/models/user.model';
@@ -50,7 +50,7 @@ export class AuthService {
     }
   }
 
-  async login(user: UserModel): Promise<AuthResponseDto> {
+  async login(user: UserModel): Promise<AuthResponse> {
     const { id } = user;
     const payload = { userId: id };
     return {
