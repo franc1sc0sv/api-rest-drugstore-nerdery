@@ -8,7 +8,7 @@ import { UpdateCategoryInput } from '../dtos/request/update-category.input';
 import {
   mockCategory,
   mockCategories,
-} from '../../../__mocks__/data/categories.mocks';
+} from '../../../__mocks__/data/categories.mock';
 
 describe('CategoriesService', () => {
   let categoriesService: CategoriesService;

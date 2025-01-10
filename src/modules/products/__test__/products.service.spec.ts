@@ -8,7 +8,7 @@ import {
   mockPage,
   mockPageSize,
   mockProducts,
-} from '../../../__mocks__/data/product.mocks';
+} from '../../../__mocks__/data/product.mock';
 
 const mockImageService = {
   uploadImage: jest.fn(),

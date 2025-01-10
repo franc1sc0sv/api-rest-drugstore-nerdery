@@ -8,7 +8,7 @@ import {
   mockUploadImageInput,
   mockUploadResponse,
   mockUploadResponseCloudinary,
-} from '../../../__mocks__/data/images.mocks';
+} from '../../../__mocks__/data/images.mock';
 
 jest.mock('cloudinary', () => ({
   v2: {

@@ -77,7 +77,10 @@ type LikeModel {
 }
 
 type Mutation {
-  addImagesToProduct(productIdDto: IdDto!, uploadProductImageInput: [UploadProductImageInput!]!): ProductModel!
+  addImagesToProduct(
+    productIdDto: IdDto!
+    uploadProductImageInput: [UploadProductImageInput!]!
+  ): ProductModel!
   addItemToCart(addItemToCartInput: AddItemToCartInput!): CartModel!
   calculateTotal: TotalCartResponse!
   cancelOrder(orderIdDto: IdDto!): OrderModel!
@@ -92,9 +95,18 @@ type Mutation {
   likeProduct(productIdDto: IdDto!): LikeModel!
   removeCartItem(cartItemIdDto: IdDto!): Boolean!
   removeImageFromProduct(imageUrlDto: IdDto!, productIdDto: IdDto!): Boolean!
-  updateCategory(categoryIdDto: IdDto!, updateCategoryInput: UpdateCategoryInput!): CategoryModel!
-  updateProductDetails(productIdDto: IdDto!, updateProductInput: UpdateProductInput!): ProductModel!
-  updateProductStatus(productIdDto: IdDto!, updateProductStatusdInput: UpdateProductStatusInput!): ProductModel!
+  updateCategory(
+    categoryIdDto: IdDto!
+    updateCategoryInput: UpdateCategoryInput!
+  ): CategoryModel!
+  updateProductDetails(
+    productIdDto: IdDto!
+    updateProductInput: UpdateProductInput!
+  ): ProductModel!
+  updateProductStatus(
+    productIdDto: IdDto!
+    updateProductStatusdInput: UpdateProductStatusInput!
+  ): ProductModel!
 }
 
 type OrderItemModel {
@@ -116,7 +128,9 @@ type OrderModel {
   userId: String!
 }
 
-"""OrderStatus"""
+"""
+OrderStatus
+"""
 enum OrderStatus {
   CANCELED
   COMPLETED

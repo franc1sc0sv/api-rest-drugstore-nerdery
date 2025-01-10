@@ -28,7 +28,7 @@ import {
   mockUser,
   mockRegisterUserInput,
   mockLoginUserWrongInput,
-} from '../../../__mocks__/data/user.mocks';
+} from '../../../__mocks__/data/user.mock';
 
 jest.mock('../../../common/utils/bcrypt.util', () => ({
   hashPassword: jest.fn(),

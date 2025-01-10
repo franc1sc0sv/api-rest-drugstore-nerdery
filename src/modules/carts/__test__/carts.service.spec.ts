@@ -4,14 +4,14 @@ import { PrismaService } from 'nestjs-prisma';
 import { mockPrismaService } from '../../../__mocks__/dependecies/prisma.service.mocks';
 import { NotFoundException } from '@nestjs/common';
 
-import { mockUser } from '../../../__mocks__/data/user.mocks';
+import { mockUser } from '../../../__mocks__/data/user.mock';
 import {
   fixedQuantity,
   mockAddNewItemToCartInput,
   mockCart,
   mockCartCalculateTotal,
   mockCartItem,
-} from '../../../__mocks__/data/cart.mocks';
+} from '../../../__mocks__/data/cart.mock';
 
 describe('CartsService', () => {
   let cartsService: CartsService;

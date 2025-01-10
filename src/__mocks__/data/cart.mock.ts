@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker';
 import { CartModel } from 'src/common/models/cart.model';
 import { CartItemModel } from 'src/common/models/cart-item.model';
-import { mockUser } from './user.mocks';
+import { mockUser } from './user.mock';
 import { AddItemToCartInput } from 'src/modules/carts/dtos/request/add-item-to-cart.input';
-import { generateProduct } from './product.mocks';
+import { generateProduct } from './product.mock';
 
-const generateCartItem = (cartId: string): CartItemModel => {
+export const generateCartItem = (cartId: string): CartItemModel => {
   const product = generateProduct();
   return {
     id: faker.string.uuid(),
@@ -15,21 +15,20 @@ const generateCartItem = (cartId: string): CartItemModel => {
     product,
   };
 };
+export const calculateTotalPrice = (cartItems: CartItemModel[]) =>
+  cartItems.reduce((sum, item) => sum + item.quantity * item.product.price, 0);
 
 const cartIdTotalCart = faker.string.uuid();
+
 const cartItems = Array.from({ length: 3 }, () =>
   generateCartItem(cartIdTotalCart),
-);
-const totalPrice = cartItems.reduce(
-  (sum, item) => sum + item.quantity * item.product.price,
-  0,
 );
 
 export const mockCartCalculateTotal: CartModel & { totalPrice: number } = {
   id: cartIdTotalCart,
   userId: mockUser.id,
   cartItems,
-  totalPrice,
+  totalPrice: calculateTotalPrice(cartItems),
 };
 
 ///
