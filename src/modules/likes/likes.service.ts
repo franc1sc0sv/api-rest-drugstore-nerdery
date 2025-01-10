@@ -25,7 +25,6 @@ export class LikesService {
         productId,
         userId,
       },
-      include: { product: true },
     });
 
     return newLike;
@@ -56,9 +55,6 @@ export class LikesService {
     const likes = await this.prismaService.like.findMany({
       where: {
         userId,
-      },
-      include: {
-        product: true,
       },
     });
 

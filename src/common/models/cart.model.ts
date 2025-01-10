@@ -11,5 +11,5 @@ export class CartModel implements Partial<Cart> {
   userId: string;
 
   @Field(() => [CartItemModel])
-  cartItems: CartItemModel[];
+  cartItems?: CartItemModel[];
 }

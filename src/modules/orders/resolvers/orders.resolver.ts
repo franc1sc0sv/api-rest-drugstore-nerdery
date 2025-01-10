@@ -1,4 +1,11 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 
 import { OrderModel } from 'src/common/models/order.model';
 import { UserModel } from 'src/common/models/user.model';
@@ -9,10 +16,17 @@ import { OrdersService } from '../services/orders.service';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { PaymentIntentModel } from 'src/common/models/payment-intent.model';
 import { UnifiedAuthGuard } from 'src/common/guards/unified-auth.guard';
+import { OrderItemModel } from 'src/common/models/order-item.model';
+import { OrderItemLoader } from 'src/modules/loaders/order/order-items/order-item.loader';
+import { PaymentLoader } from 'src/modules/loaders/order/payments/payment.loader';
 
 @Resolver(() => OrderModel)
 export class OrdersResolver {
-  constructor(private readonly ordersService: OrdersService) {}
+  constructor(
+    private readonly ordersService: OrdersService,
+    private readonly orderItemLoader: OrderItemLoader,
+    private readonly paymentLoader: PaymentLoader,
+  ) {}
 
   @Mutation(() => createOrderResponse)
   @UseGuards(UnifiedAuthGuard)
@@ -58,5 +72,17 @@ export class OrdersResolver {
     @Args('paymentIntentIdDto') paymentIntentIdDto: IdDto,
   ): Promise<boolean> {
     return await this.ordersService.cancelPayment(paymentIntentIdDto);
+  }
+
+  @ResolveField(() => [OrderItemModel], { nullable: true })
+  async orderItems(@Parent() order: OrderModel): Promise<OrderItemModel[]> {
+    const { id: orderId } = order;
+    return this.orderItemLoader.batchOrderItems.load(orderId);
+  }
+
+  @ResolveField(() => [PaymentIntentModel], { nullable: true })
+  async payments(@Parent() order: OrderModel): Promise<PaymentIntentModel[]> {
+    const { id: orderId } = order;
+    return this.paymentLoader.batchPaymentsByOrderId.load(orderId);
   }
 }

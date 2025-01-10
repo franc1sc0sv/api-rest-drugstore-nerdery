@@ -7,7 +7,7 @@ import { ProductModel } from 'src/common/models/product.model';
 export class ProductLoader {
   constructor(private readonly prismaService: PrismaService) {}
 
-  batchPorducts = new DataLoader<string, ProductModel>(
+  batchProducts = new DataLoader<string, ProductModel>(
     async (productIds: string[]) => {
       const products = await this.prismaService.product.findMany({
         where: { id: { in: productIds } },

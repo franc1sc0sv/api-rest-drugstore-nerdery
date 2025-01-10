@@ -12,7 +12,7 @@ export class OrderItemModel implements Partial<OrderItem> {
   productId: string;
 
   @Field(() => ProductModel)
-  product: ProductModel;
+  product?: ProductModel;
 
   @Field()
   quantity: number;

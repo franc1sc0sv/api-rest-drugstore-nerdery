@@ -17,5 +17,5 @@ export class LikeModel implements Partial<Like> {
   createdAt: Date;
 
   @Field(() => ProductModel)
-  product: ProductModel;
+  product?: ProductModel;
 }

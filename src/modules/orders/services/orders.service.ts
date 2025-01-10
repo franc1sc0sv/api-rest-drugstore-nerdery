@@ -86,27 +86,6 @@ export class OrdersService {
     const orders = await this.prismaService.order.findMany({
       where: { userId },
       orderBy: { orderStatus: 'asc' },
-      include: {
-        orderItems: {
-          select: {
-            id: true,
-            product: {
-              select: {
-                id: true,
-                description: true,
-                images: true,
-                name: true,
-                price: true,
-                categoryId: true,
-              },
-            },
-            quantity: true,
-            orderId: true,
-            productId: true,
-          },
-        },
-        payments: { orderBy: { createdAt: 'asc' } },
-      },
     });
 
     return orders;
@@ -117,27 +96,6 @@ export class OrdersService {
 
     const order = await this.prismaService.order.findFirst({
       where: { id: orderId },
-      include: {
-        orderItems: {
-          select: {
-            id: true,
-            product: {
-              select: {
-                id: true,
-                description: true,
-                images: true,
-                name: true,
-                price: true,
-                categoryId: true,
-              },
-            },
-            quantity: true,
-            orderId: true,
-            productId: true,
-          },
-        },
-        payments: true,
-      },
     });
 
     if (!order) {
@@ -165,7 +123,6 @@ export class OrdersService {
 
     const { payments } = order;
 
-    // Asegurarse de cancelar todos los intents de pago
     await Promise.all(
       payments.map((payment) =>
         this.stripeService.cancelPaymentIntent({ id: payment.stripePaymentId }),
@@ -176,27 +133,6 @@ export class OrdersService {
       where: { id: orderId },
       data: {
         orderStatus: OrderStatus.CANCELED,
-      },
-      include: {
-        orderItems: {
-          select: {
-            id: true,
-            product: {
-              select: {
-                id: true,
-                description: true,
-                images: true,
-                name: true,
-                price: true,
-                categoryId: true,
-              },
-            },
-            quantity: true,
-            orderId: true,
-            productId: true,
-          },
-        },
-        payments: true,
       },
     });
 

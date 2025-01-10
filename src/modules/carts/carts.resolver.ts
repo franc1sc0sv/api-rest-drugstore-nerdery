@@ -1,4 +1,11 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Parent,
+  ResolveField,
+} from '@nestjs/graphql';
 import { CartsService } from './carts.service';
 import { CartModel } from 'src/common/models/cart.model';
 import { IdDto } from 'src/common/dtos/id.dto';
@@ -8,10 +15,15 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserModel } from 'src/common/models/user.model';
 import { TotalCartResponse } from './dtos/response/total-cart.response';
 import { UnifiedAuthGuard } from 'src/common/guards/unified-auth.guard';
+import { CartItemModel } from 'src/common/models/cart-item.model';
+import { CartItemLoader } from '../loaders/cart/cart-item/cart-item.loader';
 
-@Resolver()
+@Resolver(() => CartModel)
 export class CartsResolver {
-  constructor(private readonly cartService: CartsService) {}
+  constructor(
+    private readonly cartService: CartsService,
+    private readonly cartItemLoader: CartItemLoader,
+  ) {}
 
   @Query(() => CartModel)
   @UseGuards(UnifiedAuthGuard)
@@ -43,5 +55,11 @@ export class CartsResolver {
     @CurrentUser() user: UserModel,
   ): Promise<TotalCartResponse> {
     return await this.cartService.calculateTotal(user);
+  }
+
+  @ResolveField(() => [CartItemModel], { nullable: true })
+  async cartItems(@Parent() cart: CartModel): Promise<CartItemModel[]> {
+    const { id: cartId } = cart;
+    return this.cartItemLoader.batchCartItems.load(cartId);
   }
 }
