@@ -4,7 +4,7 @@ import { PrismaService } from 'nestjs-prisma';
 import { mockPrismaService } from '../../../__mocks__/dependecies/prisma.service.mocks';
 import { NotFoundException } from '@nestjs/common';
 
-import { mockLike, mockLikes } from '../../../__mocks__/data/likes.mocks';
+import { mockLike, mockLikes } from '../../../__mocks__/data/likes.mock';
 import { mockUser } from '../../../__mocks__/data/user.mock';
 
 describe('LikesService', () => {

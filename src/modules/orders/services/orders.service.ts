@@ -16,6 +16,7 @@ import { IdDto } from '../../../common/dtos/id.dto';
 import { CreatePaymentIntent } from '../dtos/request/create-payment-intent.dto';
 import { createOrderResponse } from '../dtos/response/create-order-response.response';
 import { PaymentIntentModel } from '../../../common/models/payment-intent.model';
+import { StripeEventType } from '../../../common/enums/stripeEvenType.enum';
 
 @Injectable()
 export class OrdersService {
@@ -180,8 +181,11 @@ export class OrdersService {
     if (!paymentIntent) {
       throw new NotFoundException('PaymentIntent not found.');
     }
-
-    if (paymentIntent.stripeStatus === 'succeeded') {
+    console.log(paymentIntent);
+    if (
+      paymentIntent.stripeStatus === 'succeeded' ||
+      paymentIntent.stripeStatus === StripeEventType.PAYMENT_INTENT_SUCCEEDED
+    ) {
       throw new BadRequestException('Cannot cancel a completed payment.');
     }
 

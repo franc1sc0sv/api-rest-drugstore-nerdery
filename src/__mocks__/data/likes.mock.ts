@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker/.';
-import { generateProduct } from './product.mocks';
+import { generateProduct } from './product.mock';
 import { LikeModel } from 'src/common/models/like.model';
-import { mockUser } from './user.mocks';
+import { mockUser } from './user.mock';
 
 const generateLike = (): LikeModel => {
   const product = generateProduct();
